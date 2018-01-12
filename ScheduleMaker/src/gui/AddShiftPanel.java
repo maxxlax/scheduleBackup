@@ -11,6 +11,7 @@ import javax.swing.JRadioButton;
 import javax.swing.JTextField;
 
 import scheduling.Day;
+import scheduling.Shift;
 import scheduling.ShiftType;
 import scheduling.Week;
 
@@ -21,7 +22,8 @@ public class AddShiftPanel extends JPanel
 	ButtonGroup bg;
 	JLabel startEnd;
 	JTextField startArea, endArea;
-	JButton confirm;
+	JButton addShift;
+	ShiftEditor editorPanel;
 
 	public AddShiftPanel(MainPanel mainPanel)
 	{
@@ -54,16 +56,15 @@ public class AddShiftPanel extends JPanel
 		endArea.setBounds(90, 60, 50, 30);
 		add(endArea);
 
-		confirm = new JButton("Confirm");
-		confirm.setBounds(50, 600, 100, 30);
-		confirm.addActionListener(new ActionListener()
+		addShift = new JButton("Add Shift");
+		addShift.setBounds(50, 250, 100, 30);
+		addShift.addActionListener(new ActionListener()
 		{
 			@Override
 			public void actionPerformed(ActionEvent ae)
 			{
 				int startTime = -1, endTime = -1;
 
-				//Ensure Start Time and End Time are set
 				try
 				{
 					startTime = Integer.parseInt(startArea.getText());
@@ -118,7 +119,11 @@ public class AddShiftPanel extends JPanel
 				}
 			}
 		});
-		add(confirm);
+		add(addShift);
+		
+		editorPanel = new ShiftEditor(mainPanel.black, mainPanel.red, mainPanel.white);
+		editorPanel.setBounds(1, 300, 189, 250);
+		add(editorPanel);
 	}
 	
 	private void setError(String string)
@@ -126,4 +131,9 @@ public class AddShiftPanel extends JPanel
 		// TODO Auto-generated method stub
 		
 	}
+
+  public void viewShiftEditor(Shift shift)
+  {
+    editorPanel.editShift(shift);
+  }
 }

@@ -37,4 +37,16 @@ public class SchedulePanel extends JTabbedPane
 			pmSchedulePane.drawShifts(schedule.get(day).get("pm"), day);
 		}
 	}
+
+  public void emptyAll()
+  {
+    amSchedulePane.emptyAll();
+    pmSchedulePane.emptyAll();
+  }
+
+  public void emptyFillers()
+  {
+    amSchedulePane.emptyFillers();
+    pmSchedulePane.emptyFillers();
+  }
 }
