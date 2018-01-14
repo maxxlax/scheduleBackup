@@ -223,7 +223,6 @@ public class EmployeePanel extends JPanel
     @Override
     public void actionPerformed(ActionEvent ae)
     {
-      System.out.println(ae.getSource());
       if (ae.getSource() == addEmployee)
       {
         setTextAreasColor(Color.WHITE);

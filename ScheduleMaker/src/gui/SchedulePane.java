@@ -17,8 +17,9 @@ import scheduling.Week;
 @SuppressWarnings("serial")
 public class SchedulePane extends JPanel
 {
-  ArrayList<ArrayList<ShiftField>> fillers;
+  ArrayList<ShiftField> fillers;
   HashMap<Day, HashMap<String, ArrayList<ShiftField>>> shiftAreas;
+  HashMap<String, ArrayList<ShiftField>> shiftHeaders;
   MainPanel mainPanel;
 
   public SchedulePane(MainPanel mainPanel)
@@ -32,28 +33,64 @@ public class SchedulePane extends JPanel
     shiftAreas = new HashMap<Day, HashMap<String, ArrayList<ShiftField>>>();
 
     // Build Fillers
-    fillers = new ArrayList<ArrayList<ShiftField>>();
-    for (int column = 0; column < 2; column++)
+    fillers = new ArrayList<ShiftField>();
+    int column = 0;
+    for (int row = 0; row < 19; row++)
     {
-      fillers.add(new ArrayList<ShiftField>());
-      for (int row = 0; row < 19; row++)
+      ShiftField sf = new ShiftField();
+      sf.setBounds(column * boxWidth, row * boxHeight, boxWidth, boxHeight);
+      if (column == 1 && ((row > 1 && row < 10) || (row > 10 && row < 20)))
       {
-        ShiftField sf = new ShiftField(column + ", " + row);
-        sf.setBounds(column * boxWidth, row * boxHeight, boxWidth, boxHeight);
-        if (column == 1 && ((row > 1 && row < 10) || (row > 10 && row < 20)))
-        {
-          sf.addFocusListener(new FillerAreaListener());
-        }
-        fillers.get(column).add(sf);
+        
       }
+      fillers.add(sf);
     }
-    fillers.get(0).get(1).setText("InShop");
-    fillers.get(0).get(10).setText("Driver");
-    for (int ii = 0; ii < fillers.get(0).size(); ii++)
+    fillers.get(1).setText("InShop");
+    fillers.get(10).setText("Driver");
+    for (int ii = 0; ii < fillers.size(); ii++)
     {
-      add(fillers.get(0).get(ii));
-      add(fillers.get(1).get(ii));
+      add(fillers.get(ii));
     }
+    ShiftField filler1 = new ShiftField();
+    filler1.setBounds(boxWidth, 0, boxWidth, boxHeight);
+    filler1.setEditable(false);
+    add(filler1);
+    
+    ShiftField filler2 = new ShiftField();
+    filler2.setBounds(boxWidth, boxHeight, boxWidth, boxHeight);
+    filler2.setEditable(false);
+    add(filler2);
+    
+    ShiftField filler3 = new ShiftField();
+    filler3.setBounds(boxWidth, boxHeight * 10, boxWidth, boxHeight);
+    filler3.setEditable(false);
+    add(filler3);
+    
+    ArrayList<ShiftField> ishiftHeaders = new ArrayList<ShiftField>();
+    for(int ii = 2; ii < 10; ii++)
+    {
+      ShiftField sf = new ShiftField();
+      sf.setBounds(boxWidth, boxHeight * ii, boxWidth, boxHeight);
+      sf.addFocusListener(new FillerAreaListener());
+      ishiftHeaders.add(sf);
+      add(sf);
+    }
+    
+    ArrayList<ShiftField> dshiftHeaders = new ArrayList<ShiftField>();
+    for(int ii = 11; ii < 19; ii++)
+    {
+      ShiftField sf = new ShiftField();
+      sf.setBounds(boxWidth, boxHeight * ii, boxWidth, boxHeight);
+      sf.addFocusListener(new FillerAreaListener());
+      dshiftHeaders.add(sf);
+      add(sf);
+    }
+    
+    shiftHeaders = new HashMap<String, ArrayList<ShiftField>>();
+    shiftHeaders.put("InShop", ishiftHeaders);
+    shiftHeaders.put("Driver", dshiftHeaders);
+    
+    //Begin Creating Week
     for (Day day : new Week())
     {
       JTextField jta = new JTextField(day.toString());
@@ -145,12 +182,12 @@ public class SchedulePane extends JPanel
     {
       if (shift.type.equals(ShiftType.InShop))
       {
-        fillers.get(1).get(2 + iCounter).setShift(shift);
+        shiftHeaders.get("InShop").get(iCounter).setShift(shift);
         shiftAreas.get(day).get("InShop").get(iCounter).setShift(shift);
       }
       else if (shift.type.equals(ShiftType.Driver))
       {
-        fillers.get(1).get(11 + dCounter).setShift(shift);
+        shiftHeaders.get("Driver").get(dCounter).setShift(shift);
         shiftAreas.get(day).get("Driver").get(dCounter).setShift(shift);
       }
       if (shift.type.equals(ShiftType.InShop))
@@ -188,18 +225,14 @@ public class SchedulePane extends JPanel
             "What would you like to do with this shift?\n" + current.getShift().toString(false),
             "Shift Selected", JOptionPane.YES_NO_CANCEL_OPTION, JOptionPane.INFORMATION_MESSAGE,
             null, options, options[2]);
-        
-        int id = getFillerShiftID(current);
+
+        int id = getShiftHeaderID(current);
+        if(getShiftHeaderInDr(current).equals("Driver"))
+        {
+          id += numInshop();
+        }
         String ampm = getShiftAMPM(current.getShift());
-        if (id > 1 && id < 10)
-        {
-          id -= 2;
-        }
-        else if (id > 10 && id < 20)
-        {
-          id -= 11 + numInshop();
-        }
-        
+    
         if (response == 0)
         {
           mainPanel.viewShiftEditor(current.getShift(), ampm, id);
@@ -222,9 +255,22 @@ public class SchedulePane extends JPanel
 
   }
 
-  public int getFillerShiftID(ShiftField current)
+  public int getShiftHeaderID(ShiftField current)
   {
-    return fillers.get(1).indexOf(current);
+    if(shiftHeaders.get("InShop").indexOf(current) == -1)
+    {
+      return shiftHeaders.get("Driver").indexOf(current);
+    }
+    return shiftHeaders.get("InShop").indexOf(current);
+  }
+
+  public String getShiftHeaderInDr(ShiftField current)
+  {
+    if(shiftHeaders.get("InShop").indexOf(current) == -1)
+    {
+      return "Driver";
+    }
+    return "InShop";
   }
 
   public String getShiftAMPM(Shift shift)
@@ -238,7 +284,11 @@ public class SchedulePane extends JPanel
 
   public void emptyAll()
   {
-    for (ShiftField sf : fillers.get(1))
+    for (ShiftField sf : shiftHeaders.get("InShop"))
+    {
+      sf.setText("");
+    }
+    for (ShiftField sf : shiftHeaders.get("Driver"))
     {
       sf.setText("");
     }
@@ -257,7 +307,12 @@ public class SchedulePane extends JPanel
 
   public void emptyFillers()
   {
-    for (ShiftField sf : fillers.get(1))
+    for (ShiftField sf : shiftHeaders.get("InShop"))
+    {
+      sf.emptyShift();
+    }
+    
+    for (ShiftField sf : shiftHeaders.get("Driver"))
     {
       sf.emptyShift();
     }
@@ -265,16 +320,14 @@ public class SchedulePane extends JPanel
 
   public int numInshop()
   {
-    int ret = 0;
-    for (int ii = 2; ii < 10; ii++)
+    for (int ii = 0; ii < 8; ii++)
     {
-      if (fillers.get(1).get(ii).isEmpty())
+      if (shiftHeaders.get("InShop").get(ii).isEmpty())
       {
-        return ret;
+        return ii;
       }
-      ret++;
     }
-    return ret;
+    return -1;
   }
 
   private class ShiftAreaListener implements FocusListener

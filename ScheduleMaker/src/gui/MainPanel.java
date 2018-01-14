@@ -37,7 +37,6 @@ public class MainPanel extends Toolbox
   ImageIcon image;
   private String editShiftAMPM;
   private int editShiftID;
-
   public MainPanel()
   {
     super();
