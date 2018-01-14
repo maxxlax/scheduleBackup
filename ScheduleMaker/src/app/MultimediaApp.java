@@ -1,7 +1,5 @@
 package app;
 
-import javax.swing.*;
-
 /**
  * The requirements of a multimedia Applet/application
  *
@@ -41,5 +39,7 @@ public interface MultimediaApp
     /**
      * Called to indicate that this MultimediaApp has been stopped
      */
-    public abstract void stop();    
+    public abstract void stop();
+
+    public abstract boolean saveShit();    
 }

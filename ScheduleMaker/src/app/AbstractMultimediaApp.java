@@ -1,7 +1,5 @@
 package app;
 
-import javax.swing.*;
-
 /**
  * An abstract implementation of the MultimediaApp interface
  * that includes empty implementations of the "transition"
@@ -57,5 +55,11 @@ public abstract class      AbstractMultimediaApp
      */
     public void stop()
     {
+    }
+    
+    @Override
+    public boolean saveShit()
+    {
+      return false;
     }
 }

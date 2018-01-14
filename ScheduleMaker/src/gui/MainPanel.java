@@ -5,6 +5,8 @@ import java.util.ArrayList;
 import java.util.Collections;
 
 import javax.swing.DefaultListModel;
+import javax.swing.ImageIcon;
+import javax.swing.JLabel;
 import javax.swing.JOptionPane;
 import javax.swing.JTabbedPane;
 import javax.swing.UIManager;
@@ -31,6 +33,10 @@ public class MainPanel extends Toolbox
   EmployeePanel employeePanel;
   ViewShiftPanel setShiftPanel;
   AddShiftPanel addShiftPanel;
+  JLabel imageLabel;
+  ImageIcon image;
+  private String editShiftAMPM;
+  private int editShiftID;
 
   public MainPanel()
   {
@@ -65,6 +71,11 @@ public class MainPanel extends Toolbox
     jtp.addTab("Schedule", createSchedulePanel);
     add(jtp);
 
+    image = new ImageIcon("jj.jpg");
+    imageLabel = new JLabel("", image, JLabel.CENTER);
+    imageLabel.setBounds(1, 537, 105, 100);
+    add(imageLabel);
+
     addExtraTestEmployees();
     employeePanel.nameChanged();
   }
@@ -96,6 +107,11 @@ public class MainPanel extends Toolbox
     {
       notifyUser("No Employees Have Been Added");
     }
+    else if (schedule.get(Day.Sunday).get("am").size() == 0
+        && schedule.get(Day.Sunday).get("pm").size() == 0)
+    {
+      notifyUser("No Shifts Have Been Added");
+    }
     else
     {
       scheduler = new Scheduler(employees, this);
@@ -115,21 +131,48 @@ public class MainPanel extends Toolbox
     createSchedulePanel.viewShift(shift);
   }
 
-  public void viewShiftEditor(Shift shift)
+  public void viewShiftEditor(Shift shift, String ampm, int id)
   {
+    this.editShiftAMPM = ampm;
+    this.editShiftID = id;
     jtp.setSelectedIndex(3);
     addShiftPanel.viewShiftEditor(shift);
   }
 
+  public void editShift(int start, int end)
+  {
+    for (Day day : new Week())
+    {
+      // Subtract difference shift hours from current hours
+      Shift s = schedule.get(day).get(editShiftAMPM).get(editShiftID);
+      if (s.filled)
+      {
+        s.employee.currentHours -= s.endTime - s.startTime;
+        s.employee.currentHours += end - start;
+      }
+      // Edit the shift
+      schedule.get(day).get(editShiftAMPM).get(editShiftID).startTime = start;
+      schedule.get(day).get(editShiftAMPM).get(editShiftID).endTime = end;
+    }
+    redrawSchedule();
+  }
+
   public void removeShift(String ampm, int i)
   {
-    for(Day day: new Week())
+    for (Day day : new Week())
     {
+      // Subtract shift hours from current hours
+      Shift s = schedule.get(day).get(ampm).get(i);
+      if (s.filled)
+      {
+        s.employee.currentHours -= s.endTime - s.startTime;
+      }
+      // Remove the shift
       schedule.get(day).get(ampm).remove(i);
     }
     redrawSchedule();
   }
-  
+
   /**
    * Removes employees from the list and replaces them in the order that the user has set.
    * 
@@ -276,5 +319,11 @@ public class MainPanel extends Toolbox
     {
       e.printStackTrace();
     }
+  }
+
+  public boolean saveAllInfo()
+  {
+    System.out.println("Saving...");
+    return true;
   }
 }

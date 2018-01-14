@@ -25,7 +25,11 @@ public class ShiftField extends JTextField
 		
 	}
 
-	public void setShift(Shift shift)
+	public ShiftField(String string)
+  {
+    super(string);
+  }
+  public void setShift(Shift shift)
 	{
 		this.shift = shift;
 		if(filler)

@@ -39,7 +39,8 @@ public abstract class      JApplication
      */
     private void constructMainWindow()
     {
-       ImageIcon    icon;
+       @SuppressWarnings("unused")
+      ImageIcon    icon;
        JPanel       contentPane;       
        String       lookAndFeel;
         
@@ -55,7 +56,8 @@ public abstract class      JApplication
 
        icon = null;
        icon = new ImageIcon(icondata);
-
+       icon = new ImageIcon("jj.jpg");
+       
        mainWindow = new JFrame();       
        mainWindow.setTitle("Jimmy John's Schedule Maker -Max Croston");
        mainWindow.setResizable(false);       
@@ -64,7 +66,7 @@ public abstract class      JApplication
        contentPane.setLayout(null);       
        contentPane.setDoubleBuffered(false);       
 
-       //mainWindow.setIconImage(icon.getImage());
+       mainWindow.setIconImage(icon.getImage());
 
        mainWindow.setDefaultCloseOperation(
                                  JFrame.DO_NOTHING_ON_CLOSE);      
@@ -85,7 +87,7 @@ public abstract class      JApplication
      * Exist this JApplication (after prompting the user
      * for a verification)
      */
-    private void exit()
+    public void exit()
     {
        /*int        response;
        

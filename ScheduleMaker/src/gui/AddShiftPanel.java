@@ -31,11 +31,11 @@ public class AddShiftPanel extends JPanel
 		setBackground(mainPanel.red);
 		
 		irb = new JRadioButton("InShop");
-		irb.setBounds(25, 10, 70, 20);
+		irb.setBounds(30, 10, 70, 20);
 		irb.setSelected(true);
 
 		drb = new JRadioButton("Driver");
-		drb.setBounds(95, 10, 70, 20);
+		drb.setBounds(100, 10, 70, 20);
 
 		bg = new ButtonGroup();
 		bg.add(irb);
@@ -45,19 +45,19 @@ public class AddShiftPanel extends JPanel
 		add(drb);
 
 		startEnd = new JLabel("start         end");
-		startEnd.setBounds(50, 40, 200, 20);
+		startEnd.setBounds(60, 40, 200, 20);
 		add(startEnd);
 
 		startArea = new JTextField("11");
-		startArea.setBounds(35, 60, 50, 30);
+		startArea.setBounds(45, 60, 50, 30);
 		add(startArea);
 
 		endArea = new JTextField("15");
-		endArea.setBounds(90, 60, 50, 30);
+		endArea.setBounds(100, 60, 50, 30);
 		add(endArea);
 
 		addShift = new JButton("Add Shift");
-		addShift.setBounds(50, 250, 100, 30);
+		addShift.setBounds(50, 120, 100, 30);
 		addShift.addActionListener(new ActionListener()
 		{
 			@Override
@@ -121,8 +121,8 @@ public class AddShiftPanel extends JPanel
 		});
 		add(addShift);
 		
-		editorPanel = new ShiftEditor(mainPanel.black, mainPanel.red, mainPanel.white);
-		editorPanel.setBounds(1, 300, 189, 250);
+		editorPanel = new ShiftEditor(mainPanel, mainPanel.black, mainPanel.red, mainPanel.white);
+		editorPanel.setBounds(1, 390, 189, 250);
 		add(editorPanel);
 	}
 	

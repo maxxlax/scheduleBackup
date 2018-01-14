@@ -38,7 +38,7 @@ public class SchedulePane extends JPanel
       fillers.add(new ArrayList<ShiftField>());
       for (int row = 0; row < 19; row++)
       {
-        ShiftField sf = new ShiftField();
+        ShiftField sf = new ShiftField(column + ", " + row);
         sf.setBounds(column * boxWidth, row * boxHeight, boxWidth, boxHeight);
         if (column == 1 && ((row > 1 && row < 10) || (row > 10 && row < 20)))
         {
@@ -184,36 +184,32 @@ public class SchedulePane extends JPanel
       {
         requestFocus();
         String[] options = {"Edit Shift", "Delete Shift", "Cancel"};
-        int response = JOptionPane.showOptionDialog(null, "What would you like to do with this shift?\n" + current.getShift().toString(false), "Shift Selected",
-            JOptionPane.YES_NO_CANCEL_OPTION, JOptionPane.INFORMATION_MESSAGE, null, options,
-            options[2]);
+        int response = JOptionPane.showOptionDialog(null,
+            "What would you like to do with this shift?\n" + current.getShift().toString(false),
+            "Shift Selected", JOptionPane.YES_NO_CANCEL_OPTION, JOptionPane.INFORMATION_MESSAGE,
+            null, options, options[2]);
+        
+        int id = getFillerShiftID(current);
+        String ampm = getShiftAMPM(current.getShift());
+        if (id > 1 && id < 10)
+        {
+          id -= 2;
+        }
+        else if (id > 10 && id < 20)
+        {
+          id -= 11 + numInshop();
+        }
+        
         if (response == 0)
         {
-          mainPanel.viewShiftEditor(current.getShift());
+          mainPanel.viewShiftEditor(current.getShift(), ampm, id);
         }
         else if (response == 1)
         {
           if (JOptionPane.showConfirmDialog(null,
               "Are you sure you want to remove this shift and all assignments made to it?") == 0)
           {
-            int id = getFillerShiftID(current);
-            String ampm;
-            if (current.getShift().startTime <= 12)
-            {
-              ampm = "am";
-            }
-            else
-            {
-              ampm = "pm";
-            }
-            if (id > 1 && id < 10)
-            {
-              mainPanel.removeShift(ampm, id - 2);
-            }
-            else if (id > 10 && id < 20)
-            {
-              mainPanel.removeShift(ampm, (id - 11) + numInshop());
-            }
+            mainPanel.removeShift(ampm, id);
           }
         }
       }
@@ -226,25 +222,18 @@ public class SchedulePane extends JPanel
 
   }
 
-  private class ShiftAreaListener implements FocusListener
-  {
-
-    @Override
-    public void focusGained(FocusEvent fe)
-    {
-      mainPanel.viewShiftInfo(((ShiftField) fe.getSource()).getShift());
-    }
-
-    @Override
-    public void focusLost(FocusEvent fe)
-    {
-    }
-
-  }
-
   public int getFillerShiftID(ShiftField current)
   {
     return fillers.get(1).indexOf(current);
+  }
+
+  public String getShiftAMPM(Shift shift)
+  {
+    if (shift.startTime <= 12)
+    {
+      return "am";
+    }
+    return "pm";
   }
 
   public void emptyAll()
@@ -286,5 +275,21 @@ public class SchedulePane extends JPanel
       ret++;
     }
     return ret;
+  }
+
+  private class ShiftAreaListener implements FocusListener
+  {
+
+    @Override
+    public void focusGained(FocusEvent fe)
+    {
+      mainPanel.viewShiftInfo(((ShiftField) fe.getSource()).getShift());
+    }
+
+    @Override
+    public void focusLost(FocusEvent fe)
+    {
+    }
+
   }
 }

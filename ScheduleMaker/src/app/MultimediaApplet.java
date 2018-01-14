@@ -1,6 +1,5 @@
 package app;
 
-import java.awt.*;
 import javax.swing.*;
 
 /**
@@ -20,6 +19,7 @@ import javax.swing.*;
  * @see     "The Design and Implementation of Multimedia Software © 2011"
  * @version 1.0
  */
+@SuppressWarnings({"serial", "deprecation"})
 public abstract class      MultimediaApplet 
                 extends    JApplet
                 implements MultimediaRootPaneContainer

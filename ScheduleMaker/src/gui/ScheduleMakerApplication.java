@@ -15,7 +15,7 @@ public class ScheduleMakerApplication extends MultimediaApplication
     public static void main(String[] args) throws Exception
     {
        SwingUtilities.invokeAndWait(
-          new ScheduleMakerApplication(args, 983, 637));
+          new ScheduleMakerApplication(args, 983, 657));
     }
 
 	public ScheduleMakerApplication(String[] args, int width, int height)
