@@ -1,6 +1,7 @@
 package employee;
 
 import java.util.ArrayList;
+import java.util.StringTokenizer;
 
 import scheduling.Day;
 import scheduling.Shift;
@@ -98,7 +99,10 @@ public class Employee implements Comparable<Employee>
 			int currentHours, int maxNumHours, ArrayList<int[]> availability)
 	{
 		super();
-		this.firstName = name;
+		this.fullName = name;
+		StringTokenizer st = new StringTokenizer(fullName);
+		firstName = st.nextToken();
+		lastName = st.nextToken();
 		setInshop(isInshop);
 		setDriver(isDriver);
 		this.canDouble = canDouble;
@@ -107,7 +111,17 @@ public class Employee implements Comparable<Employee>
 		setAvailability(availability);
 	}
 
-	/**
+	public String toSaveString()
+  {
+    String str = fullName + "|" + isInshop + "|" + isDriver + "|" + canDouble + "|" + currentHours + "|" + maxNumHours;
+    for(int[] av: availability)
+    {
+      str += "|" + av[0] + "|" + av[1];
+    }
+    return str;
+  }
+
+  /**
 	 * @return the isDriver
 	 */
 	public boolean isDriver()
@@ -288,7 +302,7 @@ public class Employee implements Comparable<Employee>
 	{
 		return "Employee:\n    First Name: " + firstName + "\n    Last Name: " + lastName + "\n    Inshop: " + isInshop
 				+ "\n    Driver: " + isDriver + "\n    Can Double: " + canDouble
-				+ "\n    Max Weekly Hours: " + maxNumHours;
+				+ "\n    Current Hours: " + currentHours + "\n    Max Weekly Hours: " + maxNumHours;
 	}
 
 	@Override

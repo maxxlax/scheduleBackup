@@ -3,7 +3,6 @@ package gui;
 import java.util.ArrayList;
 import java.util.HashMap;
 
-import javax.swing.JComboBox;
 import javax.swing.JPanel;
 
 import employee.Employee;
@@ -22,8 +21,8 @@ public class Toolbox extends JPanel
 	ArrayList<Day> prioritizedSalesWeek;
 	ShiftCreator sc;
 	Scheduler scheduler;
-	ArrayList<Employee> employees;
-	boolean salesReady, employeesReady;
+	public ArrayList<Employee> employees;
+	public boolean salesReady, employeesReady, shiftsReady, scheduleSet;
 	CreateSchedulePanel createSchedulePanel;
 	ViewEmployeesPanel viewEmployeesPanel;
 	boolean newEmployeeRemoved;
@@ -43,19 +42,6 @@ public class Toolbox extends JPanel
 			schedule.get(day).put("am", new ArrayList<Shift>());
 			schedule.get(day).put("pm", new ArrayList<Shift>());
 		}
-	}
-
-	public void addEmployee(Employee employee, JComboBox<Employee> employeeCB)
-	{
-		employees.add(employee);
-		employeeCB.addItem(employee);
-		if (!newEmployeeRemoved)
-		{
-			employeeCB.removeItemAt(0);
-			newEmployeeRemoved = true;
-		}
-		employeesReady = true;
-		viewEmployeesPanel.addEmployee(employee);
 	}
 
 	public void editEmployee(String firstName, String lastName, boolean isInshop, boolean isDriver, boolean canDouble,
@@ -96,7 +82,7 @@ public class Toolbox extends JPanel
 
 	public boolean isReady()
 	{
-		return salesReady && employeesReady;
+		return salesReady && employeesReady && shiftsReady;
 	}
 	/*
 	 * public void setSC() { sc = new ShiftCreator(ws); scheduler = new

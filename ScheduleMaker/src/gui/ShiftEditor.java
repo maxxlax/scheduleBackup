@@ -17,9 +17,10 @@ public class ShiftEditor extends JPanel
 {
   JLabel noneSelected, title, startEnd, successfulEdit;
   JTextField startField, endField;
-  JButton editButton;
+  JButton editButton, cancelButton;
   int start, end;
   MainPanel mainPanel;
+  boolean isAM;
 
   public ShiftEditor(MainPanel mainPanel, Color bg, Color fg, Color text)
   {
@@ -65,6 +66,12 @@ public class ShiftEditor extends JPanel
     editButton.setVisible(false);
     editButton.addActionListener(new EditListener());
     add(editButton);
+
+    cancelButton = new JButton("Cancel");
+    cancelButton.setBounds(55, 155, 85, 20);
+    cancelButton.setVisible(false);
+    cancelButton.addActionListener(new EditListener());
+    add(cancelButton);
   }
 
   public void editShift(Shift shift)
@@ -73,8 +80,12 @@ public class ShiftEditor extends JPanel
     noneSelected.setVisible(false);
     startEnd.setVisible(true);
     startField.setVisible(true);
+    startField.setText(shift.startTime + "");
     endField.setVisible(true);
+    endField.setText(shift.endTime + "");
     editButton.setVisible(true);
+    cancelButton.setVisible(true);
+    isAM = shift.isAM;
   }
 
   public boolean checkFields()
@@ -85,33 +96,59 @@ public class ShiftEditor extends JPanel
     {
       startTime = Integer.parseInt(startField.getText());
     }
-    catch(NumberFormatException nfe)
+    catch (NumberFormatException nfe)
     {
       startField.setBackground(Color.RED);
       check = false;
     }
-    
+
     try
     {
       endTime = Integer.parseInt(endField.getText());
     }
-    catch(NumberFormatException nfe)
+    catch (NumberFormatException nfe)
     {
       endField.setBackground(Color.RED);
       check = false;
     }
-    
-    if(startTime == -1 || startTime < 5 || startTime > 20)
+
+    if (startTime == -1 || startTime < 5 || startTime > 20)
     {
       startField.setBackground(Color.RED);
       check = false;
     }
-    if(endTime == -1|| endTime < 10 || endTime > 24)
+    if (endTime == -1 || endTime < 10 || endTime > 24)
     {
       endField.setBackground(Color.RED);
       check = false;
     }
-    if(check)
+    if (isAM)
+    {
+      if (startTime < 1 || startTime > 16)
+      {
+        startField.setBackground(Color.RED);
+        check = false;
+      }
+      if (endTime <= startTime || endTime > 16)
+      {
+        endField.setBackground(Color.RED);
+        check = false;
+      }
+    }
+    else
+    {
+      if (startTime < 12 || startTime > 20)
+      {
+        startField.setBackground(Color.RED);
+        check = false;
+      }
+      if (endTime <= startTime || endTime > 24)
+      {
+        endField.setBackground(Color.RED);
+        check = false;
+      }
+    }
+    if (check)
     {
       start = startTime;
       end = endTime;
@@ -124,15 +161,29 @@ public class ShiftEditor extends JPanel
     @Override
     public void actionPerformed(ActionEvent ae)
     {
-      if (checkFields())
+      if (ae.getSource().equals(editButton))
       {
-        mainPanel.editShift(start, end);
+        if (checkFields())
+        {
+          mainPanel.editShift(start, end);
+          successfulEdit.setVisible(true);
+          noneSelected.setVisible(true);
+          startEnd.setVisible(false);
+          startField.setVisible(false);
+          endField.setVisible(false);
+          editButton.setVisible(false);
+          cancelButton.setVisible(false);
+        }
+      }
+      else if (ae.getSource().equals(cancelButton))
+      {
         successfulEdit.setVisible(true);
         noneSelected.setVisible(true);
         startEnd.setVisible(false);
         startField.setVisible(false);
         endField.setVisible(false);
         editButton.setVisible(false);
+        cancelButton.setVisible(false);
       }
     }
   }

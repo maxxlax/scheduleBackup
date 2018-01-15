@@ -19,8 +19,9 @@ import scheduling.ShiftCreator;
 @SuppressWarnings("serial")
 public class SalesPanel extends JPanel
 {
-	private WeeklySales ws;
+	private WeeklySales weeklySales;
 	private ArrayList<Day> prioritizedSalesWeek;
+	ArrayList<JTextArea> areas;
 	
 	public SalesPanel(MainPanel mainPanel)
 	{
@@ -31,8 +32,8 @@ public class SalesPanel extends JPanel
 		textPanel.setLayout(new GridLayout(0, 2));
 		textPanel.setBounds(0, 0, 190, 550);
 
-		ws = new WeeklySales();
-		setPrioritizedSalesWeek(ws.createPrioritizedSalesWeek());
+		weeklySales = new WeeklySales();
+		setPrioritizedSalesWeek(weeklySales.createPrioritizedSalesWeek());
 
 		ArrayList<JLabel> labels = new ArrayList<JLabel>();
 		labels.add(new JLabel("Sunday AM $", JLabel.CENTER));
@@ -50,21 +51,21 @@ public class SalesPanel extends JPanel
 		labels.add(new JLabel("Saturday AM $", JLabel.CENTER));
 		labels.add(new JLabel("Saturday PM $", JLabel.CENTER));
 
-		ArrayList<JTextArea> areas = new ArrayList<JTextArea>();
-		areas.add(new JTextArea("1000"));
-		areas.add(new JTextArea("1200"));
-		areas.add(new JTextArea("1400"));
-		areas.add(new JTextArea("1000"));
-		areas.add(new JTextArea("1600"));
-		areas.add(new JTextArea("900"));
-		areas.add(new JTextArea("1700"));
-		areas.add(new JTextArea("600"));
-		areas.add(new JTextArea("1600"));
-		areas.add(new JTextArea("1000"));
-		areas.add(new JTextArea("1900"));
-		areas.add(new JTextArea("1600"));
-		areas.add(new JTextArea("2100"));
-		areas.add(new JTextArea("2000"));
+		areas = new ArrayList<JTextArea>();
+		areas.add(new JTextArea(""));
+		areas.add(new JTextArea(""));
+		areas.add(new JTextArea(""));
+		areas.add(new JTextArea(""));
+		areas.add(new JTextArea(""));
+		areas.add(new JTextArea(""));
+		areas.add(new JTextArea(""));
+		areas.add(new JTextArea(""));
+		areas.add(new JTextArea(""));
+		areas.add(new JTextArea(""));
+		areas.add(new JTextArea(""));
+		areas.add(new JTextArea(""));
+		areas.add(new JTextArea(""));
+		areas.add(new JTextArea(""));
 
 		for (int ii = 0; ii < labels.size(); ii++)
 		{
@@ -121,17 +122,17 @@ public class SalesPanel extends JPanel
 				}
 				if (done)
 				{
-					ws.setSales(new DaySales(Integer.parseInt(areas.get(0).getText()), Integer.parseInt(areas.get(1).getText()), Day.Sunday));
-					ws.setSales(new DaySales(Integer.parseInt(areas.get(2).getText()), Integer.parseInt(areas.get(3).getText()), Day.Monday));
-					ws.setSales(new DaySales(Integer.parseInt(areas.get(4).getText()), Integer.parseInt(areas.get(5).getText()), Day.Tuesday));
-					ws.setSales(new DaySales(Integer.parseInt(areas.get(6).getText()), Integer.parseInt(areas.get(7).getText()), Day.Wednesday));
-					ws.setSales(new DaySales(Integer.parseInt(areas.get(8).getText()), Integer.parseInt(areas.get(9).getText()), Day.Thursday));
-					ws.setSales(new DaySales(Integer.parseInt(areas.get(10).getText()), Integer.parseInt(areas.get(11).getText()), Day.Friday));
-					ws.setSales(new DaySales(Integer.parseInt(areas.get(12).getText()), Integer.parseInt(areas.get(13).getText()), Day.Saturday));
-					setPrioritizedSalesWeek(ws.createPrioritizedSalesWeek());
-					ShiftCreator sc = new ShiftCreator(ws);
+					weeklySales.setSales(new DaySales(Integer.parseInt(areas.get(0).getText()), Integer.parseInt(areas.get(1).getText()), Day.Sunday));
+					weeklySales.setSales(new DaySales(Integer.parseInt(areas.get(2).getText()), Integer.parseInt(areas.get(3).getText()), Day.Monday));
+					weeklySales.setSales(new DaySales(Integer.parseInt(areas.get(4).getText()), Integer.parseInt(areas.get(5).getText()), Day.Tuesday));
+					weeklySales.setSales(new DaySales(Integer.parseInt(areas.get(6).getText()), Integer.parseInt(areas.get(7).getText()), Day.Wednesday));
+					weeklySales.setSales(new DaySales(Integer.parseInt(areas.get(8).getText()), Integer.parseInt(areas.get(9).getText()), Day.Thursday));
+					weeklySales.setSales(new DaySales(Integer.parseInt(areas.get(10).getText()), Integer.parseInt(areas.get(11).getText()), Day.Friday));
+					weeklySales.setSales(new DaySales(Integer.parseInt(areas.get(12).getText()), Integer.parseInt(areas.get(13).getText()), Day.Saturday));
+					setPrioritizedSalesWeek(weeklySales.createPrioritizedSalesWeek());
+					ShiftCreator sc = new ShiftCreator(weeklySales);
 					//System.out.println(ws.toString());
-					mainPanel.setInfo(ws, prioritizedSalesWeek, sc);
+					mainPanel.setInfo(weeklySales, prioritizedSalesWeek, sc);
 				}
 			}
 		});
@@ -153,4 +154,20 @@ public class SalesPanel extends JPanel
 	{
 		this.prioritizedSalesWeek = prioritizedSalesWeek;
 	}
+  public WeeklySales getWs()
+  {
+    return weeklySales;
+  }
+  public void setWs(WeeklySales ws)
+  {
+    int ai = 0;
+    this.weeklySales = ws;
+    for(DaySales ds: ws.getSales())
+    {
+      areas.get(ai).setText("" + ds.getAmSales());
+      ai++;
+      areas.get(ai).setText("" + ds.getPmSales());
+      ai++;
+    }
+  }
 }

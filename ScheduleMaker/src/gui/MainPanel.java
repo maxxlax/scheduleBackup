@@ -1,6 +1,7 @@
 package gui;
 
 import java.awt.Color;
+import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Collections;
 
@@ -13,6 +14,8 @@ import javax.swing.UIManager;
 import javax.swing.UnsupportedLookAndFeelException;
 
 import employee.Employee;
+import io.Loader;
+import io.Saver;
 import sales.WeeklySales;
 import scheduling.Day;
 import scheduling.Scheduler;
@@ -27,16 +30,20 @@ public class MainPanel extends Toolbox
   public final Color red = new Color(207, 10, 44);
   public final Color black = new Color(50, 50, 50);
   public final Color white = new Color(240, 240, 240);
+  public final String SAVE_FILE_NAME = "ScheduleSaveData.txt";
 
-  SchedulePanel schedulePanel;
-  JTabbedPane jtp;
-  EmployeePanel employeePanel;
-  ViewShiftPanel setShiftPanel;
-  AddShiftPanel addShiftPanel;
-  JLabel imageLabel;
-  ImageIcon image;
+  public SalesPanel salesPanel;
+  public SchedulePanel schedulePanel;
+  public JTabbedPane jtp;
+  public EmployeePanel employeePanel;
+  public ViewShiftPanel setShiftPanel;
+  public AddShiftPanel addShiftPanel;
+  public Loader loader;
+  public JLabel imageLabel;
+  public ImageIcon image;
   private String editShiftAMPM;
   private int editShiftID;
+
   public MainPanel()
   {
     super();
@@ -49,10 +56,13 @@ public class MainPanel extends Toolbox
     employees = new ArrayList<Employee>();
 
     salesReady = false;
+    employeesReady = false;
+    shiftsReady = false;
 
     schedulePanel = new SchedulePanel(this);
     add(schedulePanel);
 
+    salesPanel = new SalesPanel(this);
     employeePanel = new EmployeePanel(this);
     viewEmployeesPanel = new ViewEmployeesPanel(this);
     setShiftPanel = new ViewShiftPanel(this);
@@ -62,11 +72,11 @@ public class MainPanel extends Toolbox
     jtp = new JTabbedPane();
     jtp.setTabPlacement(JTabbedPane.LEFT);
     jtp.setBounds(0, 0, 300, 677);
-    jtp.addTab("Enter Sales", new SalesPanel(this));
+    jtp.addTab("Enter Sales", salesPanel);
     jtp.addTab("Add Employees", employeePanel);
     jtp.addTab("View Employees", viewEmployeesPanel);
     jtp.addTab("Add Shifts", addShiftPanel);
-    jtp.addTab("View Shifts", setShiftPanel);
+    //jtp.addTab("View Shifts", setShiftPanel);
     jtp.addTab("Schedule", createSchedulePanel);
     add(jtp);
 
@@ -75,18 +85,53 @@ public class MainPanel extends Toolbox
     imageLabel.setBounds(1, 537, 105, 100);
     add(imageLabel);
 
-    addExtraTestEmployees();
+    // addExtraTestEmployees();
     employeePanel.nameChanged();
   }
 
   public void addShift(Day day, String ampm, ShiftType type, int startTime, int endTime)
   {
-    schedule.get(day).get(ampm).add(new Shift(startTime, endTime, day, type));
-    Collections.sort(schedule.get(day).get(ampm));
-    redrawSchedule();
+    if (getNumType(type, day, ampm) < 8)
+    {
+      schedule.get(day).get(ampm).add(new Shift(startTime, endTime, day, type));
+      Collections.sort(schedule.get(day).get(ampm));
+      shiftsReady = true;
+      redrawSchedule();
+    }
+    else
+    {
+      // TODO JOptionPane to say those shifts are full
+      System.out.println("FULL");
+    }
   }
 
-  private void redrawSchedule()
+  public void addEmployee(Employee employee)
+  {
+    employees.add(employee);
+    employeePanel.employees.addItem(employee);
+    if (!newEmployeeRemoved)
+    {
+      employeePanel.employees.removeItemAt(0);
+      newEmployeeRemoved = true;
+    }
+    employeesReady = true;
+    viewEmployeesPanel.addEmployee(employee);
+  }
+
+  private int getNumType(ShiftType type, Day day, String ampm)
+  {
+    int counter = 0;
+    for (Shift shift : schedule.get(day).get(ampm))
+    {
+      if (shift.type.equals(type))
+      {
+        counter++;
+      }
+    }
+    return counter;
+  }
+
+  public void redrawSchedule()
   {
     schedulePanel.emptyFillers();
     schedulePanel.drawShifts(schedule);
@@ -102,12 +147,12 @@ public class MainPanel extends Toolbox
 
   public void fillOpenShifts()
   {
-    if (employees.size() == 0)
+    if (employees.size() == 0 && employeesReady)
     {
       notifyUser("No Employees Have Been Added");
     }
-    else if (schedule.get(Day.Sunday).get("am").size() == 0
-        && schedule.get(Day.Sunday).get("pm").size() == 0)
+    else if ((schedule.get(Day.Sunday).get("am").size() == 0
+        && schedule.get(Day.Sunday).get("pm").size() == 0) && shiftsReady)
     {
       notifyUser("No Shifts Have Been Added");
     }
@@ -152,6 +197,7 @@ public class MainPanel extends Toolbox
       // Edit the shift
       schedule.get(day).get(editShiftAMPM).get(editShiftID).startTime = start;
       schedule.get(day).get(editShiftAMPM).get(editShiftID).endTime = end;
+      Collections.sort(schedule.get(day).get(editShiftAMPM));
     }
     redrawSchedule();
   }
@@ -214,9 +260,9 @@ public class MainPanel extends Toolbox
     {
       if (employees.size() == 0)
       {
-        addEmployee(employeePanel.newEmployee, employeePanel.getEmployees());
+        addEmployee(employeePanel.newEmployee);
       }
-      employeePanel.getEmployees().removeItem(emp);
+      employeePanel.employees.removeItem(emp);
       viewEmployeesPanel.removeEmployee(emp);
     }
     if (employees.size() == 0)
@@ -265,6 +311,7 @@ public class MainPanel extends Toolbox
     JOptionPane.showMessageDialog(null, message);
   }
 
+  @SuppressWarnings("unused")
   private void addExtraTestEmployees()
   {
     // Create availabilities
@@ -291,20 +338,13 @@ public class MainPanel extends Toolbox
     availabilityWeek.add(new int[] {10, 23});
     availabilityWeek.add(new int[] {-1, -1});
     availabilityWeek.add(new int[] {-1, -1});
-    addEmployee(new Employee("Jake", "Croston", false, true, true, 40, availabilityWeek),
-        employeePanel.getEmployees());
-    addEmployee(new Employee("John", "Doe", true, true, false, 39, availabilityAll),
-        employeePanel.getEmployees());
-    addEmployee(new Employee("Jim", "Halpert", true, true, true, 39, availabilityAll),
-        employeePanel.getEmployees());
-    addEmployee(new Employee("Jill", "Dupuis", true, false, true, 39, availabilityAll),
-        employeePanel.getEmployees());
-    addEmployee(new Employee("Drake", "Onsair", true, true, true, 39, availabilityWeekends),
-        employeePanel.getEmployees());
-    addEmployee(new Employee("Jess", "Spencer", true, false, false, 39, availabilityAll),
-        employeePanel.getEmployees());
-    addEmployee(new Employee("Tori", "Atkins", true, false, false, 39, availabilityWeek),
-        employeePanel.getEmployees());
+    addEmployee(new Employee("Jake", "Croston", false, true, true, 40, availabilityWeek));
+    addEmployee(new Employee("John", "Doe", true, true, false, 39, availabilityAll));
+    addEmployee(new Employee("Jim", "Halpert", true, true, true, 39, availabilityAll));
+    addEmployee(new Employee("Jill", "Dupuis", true, false, true, 39, availabilityAll));
+    addEmployee(new Employee("Drake", "Onsair", true, true, true, 39, availabilityWeekends));
+    addEmployee(new Employee("Jess", "Spencer", true, false, false, 39, availabilityAll));
+    addEmployee(new Employee("Tori", "Atkins", true, false, false, 39, availabilityWeek));
   }
 
   public void setLandF(int value)
@@ -323,6 +363,21 @@ public class MainPanel extends Toolbox
   public boolean saveAllInfo()
   {
     System.out.println("Saving...");
-    return true;
+    Saver saver = new Saver(this);
+    return saver.saveAll();
+  }
+
+  public void loadAllFiles()
+  {
+    try
+    {
+      loader = new Loader(SAVE_FILE_NAME, this);
+      loader.loadFiles();
+    }
+    catch (IOException e)
+    {
+      // TODO Auto-generated catch block
+      e.printStackTrace();
+    }
   }
 }

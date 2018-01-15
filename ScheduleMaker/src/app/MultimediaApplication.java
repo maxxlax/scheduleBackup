@@ -108,7 +108,6 @@ public abstract class MultimediaApplication extends JApplication
   @Override
   public void exit()
   {
-    /*
     int response;
 
     response = JOptionPane.showConfirmDialog(mainWindow, "Would you like to save before closing?",
@@ -128,10 +127,10 @@ public abstract class MultimediaApplication extends JApplication
       }
     }
     else if (response == JOptionPane.NO_OPTION)
-    {*/
+    {
       mainWindow.setVisible(false);
       stop();
       mainWindow.dispose();
-    //}
+    }
   }
 }

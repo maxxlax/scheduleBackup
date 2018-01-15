@@ -27,7 +27,7 @@ import employee.Employee;
 public class EmployeePanel extends JPanel
 {
   private MainPanel mainPanel;
-  private JComboBox<Employee> employees;
+  public JComboBox<Employee> employees;
   private JCheckBox inshop, driver, canDouble;
   private JLabel firstName, lastName, maxNumHoursLabel, avLab1, avLab2, avLab3, startEnd, sun, mon,
       tue, wed, thur, fri, sat;
@@ -48,6 +48,7 @@ public class EmployeePanel extends JPanel
     availability = new ArrayList<JTextField>();
     newEmployee = new Employee("New", "Employee");
     employees = new JComboBox<Employee>();
+    employees.setEditable(false);
     employees.setBounds(10, 10, 150, 20);
     if (mainPanel.employees.size() == 0)
     {
@@ -233,7 +234,7 @@ public class EmployeePanel extends JPanel
             Employee emp = new Employee(firstNameArea.getText(), lastNameArea.getText(),
                 inshop.isSelected(), driver.isSelected(), canDouble.isSelected(),
                 Integer.parseInt(maxNumHoursArea.getText()), getAvailability());
-            mainPanel.addEmployee(emp, employees);
+            mainPanel.addEmployee(emp);
             employees.removeItem(newEmployee);
             employees.setSelectedItem(emp);
             setError("Employee Added");
@@ -409,11 +410,6 @@ public class EmployeePanel extends JPanel
     }
     inshop.setForeground(Color.BLACK);
     driver.setForeground(Color.BLACK);
-  }
-
-  public JComboBox<Employee> getEmployees()
-  {
-    return employees;
   }
 
   public void setSelectedEmployee(Employee employee)

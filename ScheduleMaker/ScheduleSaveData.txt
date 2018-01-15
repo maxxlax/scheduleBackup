@@ -1,0 +1,118 @@
+Sales
+Sunday|1000|1200
+Monday|1400|1000
+Tuesday|1600|900
+Wednesday|1700|600
+Thursday|1600|1000
+Friday|1900|1600
+Saturday|2100|2000
+|
+Employees
+Jake Croston|false|true|true|32|40|-1|-1|10|23|10|23|10|23|10|23|-1|-1|-1|-1
+John Doe|true|true|false|28|39|10|23|10|23|10|23|10|23|10|23|10|23|10|23
+Jim Halpert|true|true|true|36|39|10|23|10|23|10|23|10|23|10|23|10|23|10|23
+Jill Dupuis|true|false|true|36|39|10|23|10|23|10|23|10|23|10|23|10|23|10|23
+Drake Onsair|true|true|true|20|39|10|23|-1|-1|-1|-1|-1|-1|-1|-1|16|23|10|23
+Jess Spencer|true|false|false|20|39|10|23|10|23|10|23|10|23|10|23|10|23|10|23
+Tori Atkins|true|false|false|8|39|-1|-1|10|23|10|23|10|23|10|23|-1|-1|-1|-1
+|
+Schedule
+am
+11|15|Sunday|InShop|true|John Doe
+11|15|Sunday|InShop|true|Drake Onsair
+11|15|Sunday|InShop|true|Jess Spencer
+11|15|Sunday|Driver|false
+11|15|Sunday|Driver|false
+11|15|Sunday|Driver|false
+pm
+16|20|Sunday|InShop|true|Drake Onsair
+16|20|Sunday|InShop|false
+16|20|Sunday|InShop|false
+16|20|Sunday|Driver|false
+16|20|Sunday|Driver|false
+16|20|Sunday|Driver|false
+am
+11|15|Monday|InShop|true|John Doe
+11|15|Monday|InShop|true|Jim Halpert
+11|15|Monday|InShop|true|Jill Dupuis
+11|15|Monday|Driver|true|Jake Croston
+11|15|Monday|Driver|false
+11|15|Monday|Driver|false
+pm
+16|20|Monday|InShop|true|Jess Spencer
+16|20|Monday|InShop|true|Tori Atkins
+16|20|Monday|InShop|false
+16|20|Monday|Driver|true|Jake Croston
+16|20|Monday|Driver|false
+16|20|Monday|Driver|false
+am
+11|15|Tuesday|InShop|true|John Doe
+11|15|Tuesday|InShop|true|Jim Halpert
+11|15|Tuesday|InShop|true|Jill Dupuis
+11|15|Tuesday|Driver|true|Jake Croston
+11|15|Tuesday|Driver|false
+11|15|Tuesday|Driver|false
+pm
+16|20|Tuesday|InShop|true|Jim Halpert
+16|20|Tuesday|InShop|true|Jill Dupuis
+16|20|Tuesday|InShop|true|Jess Spencer
+16|20|Tuesday|Driver|true|Jake Croston
+16|20|Tuesday|Driver|false
+16|20|Tuesday|Driver|false
+am
+11|15|Wednesday|InShop|true|John Doe
+11|15|Wednesday|InShop|true|Jess Spencer
+11|15|Wednesday|InShop|true|Tori Atkins
+11|15|Wednesday|Driver|true|Jake Croston
+11|15|Wednesday|Driver|false
+11|15|Wednesday|Driver|false
+pm
+16|20|Wednesday|InShop|false
+16|20|Wednesday|InShop|false
+16|20|Wednesday|InShop|false
+16|20|Wednesday|Driver|true|Jake Croston
+16|20|Wednesday|Driver|false
+16|20|Wednesday|Driver|false
+am
+11|15|Thursday|InShop|true|John Doe
+11|15|Thursday|InShop|true|Jim Halpert
+11|15|Thursday|InShop|true|Jill Dupuis
+11|15|Thursday|Driver|true|Jake Croston
+11|15|Thursday|Driver|false
+11|15|Thursday|Driver|false
+pm
+16|20|Thursday|InShop|true|Jim Halpert
+16|20|Thursday|InShop|true|Jill Dupuis
+16|20|Thursday|InShop|true|Jess Spencer
+16|20|Thursday|Driver|true|Jake Croston
+16|20|Thursday|Driver|false
+16|20|Thursday|Driver|false
+am
+11|15|Friday|InShop|true|John Doe
+11|15|Friday|InShop|true|Jim Halpert
+11|15|Friday|InShop|true|Jill Dupuis
+11|15|Friday|Driver|false
+11|15|Friday|Driver|false
+11|15|Friday|Driver|false
+pm
+16|20|Friday|InShop|true|Jim Halpert
+16|20|Friday|InShop|true|Jill Dupuis
+16|20|Friday|InShop|true|Drake Onsair
+16|20|Friday|Driver|false
+16|20|Friday|Driver|false
+16|20|Friday|Driver|false
+am
+11|15|Saturday|InShop|true|John Doe
+11|15|Saturday|InShop|true|Jim Halpert
+11|15|Saturday|InShop|true|Jill Dupuis
+11|15|Saturday|Driver|true|Drake Onsair
+11|15|Saturday|Driver|false
+11|15|Saturday|Driver|false
+pm
+16|20|Saturday|InShop|true|Jim Halpert
+16|20|Saturday|InShop|true|Jill Dupuis
+16|20|Saturday|InShop|true|Drake Onsair
+16|20|Saturday|Driver|false
+16|20|Saturday|Driver|false
+16|20|Saturday|Driver|false
+|

@@ -43,6 +43,25 @@ public class Shift implements Comparable<Shift>
       isAM = false;
     }
   }
+  
+  public Shift(int startTime, int endTime, Day day, ShiftType type, boolean filled, Employee employee)
+  {
+    super();
+    this.startTime = startTime;
+    this.endTime = endTime;
+    this.day = day;
+    this.type = type;
+    this.employee = employee;
+    this.filled = filled;
+    if (startTime < 14)
+    {
+      isAM = true;
+    }
+    else
+    {
+      isAM = false;
+    }
+  }
 
   public Employee getEmployee()
   {
@@ -112,5 +131,15 @@ public class Shift implements Comparable<Shift>
     employee.currentHours -= endTime - startTime;
     setEmployee(new Employee());
     filled = false;
+  }
+
+  public String toSaveString()
+  {
+    String str = startTime + "|" + endTime + "|" + day + "|" + type + "|" + filled;
+    if(filled)
+    {
+      str += "|" + employee.fullName;
+    }
+    return str;
   }
 }
