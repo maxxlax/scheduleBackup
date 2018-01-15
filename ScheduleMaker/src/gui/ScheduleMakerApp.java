@@ -3,17 +3,19 @@ package gui;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 
+import javax.swing.JFrame;
 import javax.swing.JMenu;
 import javax.swing.JMenuBar;
 import javax.swing.JMenuItem;
 import javax.swing.JPanel;
 
 import app.AbstractMultimediaApp;
+import app.JApplication;
 
 public class ScheduleMakerApp extends AbstractMultimediaApp
 {
   MainPanel mainPanel;
-  JMenuItem loadItem;
+  JMenuItem loadItem, saveItem, helpItem;
   @Override
   public void init()
   {
@@ -25,14 +27,18 @@ public class ScheduleMakerApp extends AbstractMultimediaApp
     
     JMenu fileMenu = new JMenu("File");
     menuBar.add(fileMenu);
+    saveItem = new JMenuItem("Save File");
+    saveItem.addActionListener(new MyListener());
+    fileMenu.add(saveItem);
     loadItem = new JMenuItem("Load File");
     loadItem.addActionListener(new MyListener());
     fileMenu.add(loadItem);
     
     JMenu menu = new JMenu("Help");
     menuBar.add(menu);
-    JMenuItem menuItem = new JMenuItem("Open Help");
-    menu.add(menuItem);
+    helpItem = new JMenuItem("Open Help");
+    helpItem.addActionListener(new MyListener());
+    menu.add(helpItem);
     contentPane.add(menuBar);
     
     mainPanel = new MainPanel();
@@ -54,8 +60,16 @@ public class ScheduleMakerApp extends AbstractMultimediaApp
     {
       if(ae.getSource().equals(loadItem))
       {
-        System.out.println("LOAD");
+        System.out.println("LOADING...");
         mainPanel.loadAllFiles();
+      }
+      else if(ae.getSource().equals(saveItem))
+      {
+        mainPanel.saveAllInfo();
+      }
+      else if(ae.getSource().equals(helpItem))
+      {
+        HelpFrame helpFrame = new HelpFrame();
       }
     }
     
