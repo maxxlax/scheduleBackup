@@ -1,7 +1,6 @@
 package gui;
 
 import java.io.BufferedReader;
-import java.io.FileNotFoundException;
 import java.io.FileReader;
 import java.io.IOException;
 
@@ -43,6 +42,7 @@ public class HelpFrame extends JFrame
       {
         jta.append(line + "\n");
       }
+      br.close();
     }
     catch (IOException e)
     {

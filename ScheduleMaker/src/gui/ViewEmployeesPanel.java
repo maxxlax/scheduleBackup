@@ -12,11 +12,13 @@ public class ViewEmployeesPanel extends JPanel
 	public MyDragDropList myEmployeeList;
 	public JScrollPane empPane;
 	private JLabel label, label2;
+  public MainPanel mainPanel;
 
 	public ViewEmployeesPanel(MainPanel mainPanel)
 	{
 		setLayout(null);
 		setBackground(mainPanel.red);
+		this.mainPanel = mainPanel;
 		
 		label = new JLabel("Select an Employee", JLabel.CENTER);
 		label.setBounds(10, 10, 170, 20);
@@ -26,7 +28,7 @@ public class ViewEmployeesPanel extends JPanel
 		label2.setBounds(8, 30, 200, 20);
 		add(label2);
 		
-		myEmployeeList = new MyDragDropList();
+		myEmployeeList = new MyDragDropList(mainPanel);
 		empPane = new JScrollPane(myEmployeeList);
 		empPane.setBounds(10, 50, 170, 570);
 		add(empPane);

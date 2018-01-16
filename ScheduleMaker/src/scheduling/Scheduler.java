@@ -4,6 +4,7 @@ import java.util.ArrayList;
 
 import employee.Employee;
 import gui.MainPanel;
+import sales.ShiftSale;
 
 public class Scheduler
 {
@@ -38,24 +39,24 @@ public class Scheduler
 	/**
 	 * Schedule a week with prioritized days
 	 * 
-	 * @param week
+	 * @param prioritizedSalesWeek
 	 * @return
 	 */
-	public int schedulePrioritizedWeek(ArrayList<Day> week)
+	public int schedulePrioritizedWeek(ArrayList<ShiftSale> prioritizedSalesWeek)
 	{
 		// Employees
 		for (Employee emp : employees)
 		{
-			if (week == null)
+			if (prioritizedSalesWeek == null)
 			{
 				mainPanel.notifyUser("Sales Not Entered");
 				break;
 			}
 			else
 			{
-				for (Day day : week)
+				for (ShiftSale ss : prioritizedSalesWeek)
 				{
-					iterateShifts(emp, day);
+					iterateShifts(emp, ss.day);
 				}
 			}
 		}
@@ -105,7 +106,7 @@ public class Scheduler
 	 * Iterate shifts through day
 	 * 
 	 * @param emp
-	 * @param day
+	 * @param ss
 	 */
 	private void iterateShifts(Employee emp, Day day)
 	{

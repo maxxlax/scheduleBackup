@@ -16,11 +16,11 @@ import javax.swing.UnsupportedLookAndFeelException;
 import employee.Employee;
 import io.Loader;
 import io.Saver;
+import sales.ShiftSale;
 import sales.WeeklySales;
 import scheduling.Day;
 import scheduling.Scheduler;
 import scheduling.Shift;
-import scheduling.ShiftCreator;
 import scheduling.ShiftType;
 import scheduling.Week;
 
@@ -137,11 +137,10 @@ public class MainPanel extends Toolbox
     schedulePanel.drawShifts(schedule);
   }
 
-  public void setInfo(WeeklySales ws, ArrayList<Day> prioritizedSalesWeek, ShiftCreator sc)
+  public void setInfo(WeeklySales ws, ArrayList<ShiftSale> prioritizedSalesWeek)
   {
     this.ws = ws;
     this.prioritizedSalesWeek = prioritizedSalesWeek;
-    this.sc = sc;
     salesReady = true;
   }
 
@@ -371,7 +370,7 @@ public class MainPanel extends Toolbox
   {
     try
     {
-      loader = new Loader(SAVE_FILE_NAME, this);
+      loader = new Loader(SAVE_FILE_NAME, this, true);
       loader.loadFiles();
     }
     catch (IOException e)

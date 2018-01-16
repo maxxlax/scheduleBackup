@@ -3,14 +3,12 @@ package gui;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 
-import javax.swing.JFrame;
 import javax.swing.JMenu;
 import javax.swing.JMenuBar;
 import javax.swing.JMenuItem;
 import javax.swing.JPanel;
 
 import app.AbstractMultimediaApp;
-import app.JApplication;
 
 public class ScheduleMakerApp extends AbstractMultimediaApp
 {
@@ -69,6 +67,7 @@ public class ScheduleMakerApp extends AbstractMultimediaApp
       }
       else if(ae.getSource().equals(helpItem))
       {
+        @SuppressWarnings("unused")
         HelpFrame helpFrame = new HelpFrame();
       }
     }

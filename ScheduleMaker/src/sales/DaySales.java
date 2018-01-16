@@ -4,15 +4,14 @@ import scheduling.Day;
 
 public class DaySales
 {
-	private int amSales;
-	private int pmSales;
+	private ShiftSale amShiftSale, pmShiftSale;
 	private Day day;
 
 	public DaySales(int amSales, int pmSales, Day day)
 	{
 		super();
-		this.amSales = amSales;
-		this.pmSales = pmSales;
+		this.amShiftSale = new ShiftSale(day, 'a', amSales);
+		this.pmShiftSale = new ShiftSale(day, 'p', pmSales);
 		this.day = day;
 	}
 
@@ -26,29 +25,34 @@ public class DaySales
 		this.day = day;
 	}
 
-	public int getAmSales()
+	public ShiftSale getAmSales()
 	{
-		return amSales;
+		return amShiftSale;
 	}
 
-	public void setAmSales(int amSales)
+	public void setAmSales(ShiftSale amShiftSale)
 	{
-		this.amSales = amSales;
+		this.amShiftSale = amShiftSale;
 	}
 
-	public int getPmSales()
+	public ShiftSale getPmSales()
 	{
-		return pmSales;
+		return pmShiftSale;
 	}
 
-	public void setPmSales(int pmSales)
+	public void setPmSales(ShiftSale pmShiftSale)
 	{
-		this.pmSales = pmSales;
+		this.pmShiftSale = pmShiftSale;
 	}
 
 	public String toString()
 	{
-		return "\t" + day + "\n\t AM: " + amSales + "\n\t PM: " + pmSales + "\n\t\tTotal: " + (amSales + pmSales)
+		return "\t" + day + "\n\t AM: " + amShiftSale.sale + "\n\t PM: " + pmShiftSale.sale + "\n\t\tTotal: " + (amShiftSale.sale + pmShiftSale.sale)
 				+ "\n";
 	}
+
+  public String toSaveString()
+  {
+    return day  + "|" + amShiftSale.sale + "|" + pmShiftSale.sale;
+  }
 }

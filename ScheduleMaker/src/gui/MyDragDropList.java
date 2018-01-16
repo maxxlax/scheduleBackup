@@ -15,13 +15,14 @@ public class MyDragDropList extends JList<String> implements KeyListener
 {
   private DefaultListModel<String> model;
   private int currentSelected = -1;
+  private MainPanel mainPanel;
 
-  public MyDragDropList()
+  public MyDragDropList(MainPanel mainPanel)
   {
     super(new DefaultListModel<String>());
+    this.mainPanel = mainPanel;
     addKeyListener(this);
     model = (DefaultListModel<String>) getModel();
-
     addListSelectionListener(new ListSelectionListener()
     {
       @Override
@@ -61,6 +62,7 @@ public class MyDragDropList extends JList<String> implements KeyListener
           int c = currentSelected;
           model.remove(c);
           model.insertElementAt(currentString, c - 1);
+          reorganizeEmployees();
         }
       }
       if (ke.getKeyCode() == 40)
@@ -74,6 +76,11 @@ public class MyDragDropList extends JList<String> implements KeyListener
         }
       }
     }
+  }
+
+  private void reorganizeEmployees()
+  {
+      mainPanel.reorganizeEmployees(model);
   }
 
   @Override

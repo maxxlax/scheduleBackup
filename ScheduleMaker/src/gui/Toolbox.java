@@ -6,11 +6,11 @@ import java.util.HashMap;
 import javax.swing.JPanel;
 
 import employee.Employee;
+import sales.ShiftSale;
 import sales.WeeklySales;
 import scheduling.Day;
 import scheduling.Scheduler;
 import scheduling.Shift;
-import scheduling.ShiftCreator;
 import scheduling.Week;
 
 @SuppressWarnings("serial")
@@ -18,8 +18,7 @@ public class Toolbox extends JPanel
 {
 	public HashMap<Day, HashMap<String, ArrayList<Shift>>> schedule;
 	WeeklySales ws;
-	ArrayList<Day> prioritizedSalesWeek;
-	ShiftCreator sc;
+	ArrayList<ShiftSale> prioritizedSalesWeek;
 	Scheduler scheduler;
 	public ArrayList<Employee> employees;
 	public boolean salesReady, employeesReady, shiftsReady, scheduleSet;
@@ -84,9 +83,4 @@ public class Toolbox extends JPanel
 	{
 		return salesReady && employeesReady && shiftsReady;
 	}
-	/*
-	 * public void setSC() { sc = new ShiftCreator(ws); scheduler = new
-	 * Scheduler(employees, sc); scheduler.schedule(); System.out.println("AAA" +
-	 * sc.toString()); }
-	 */
 }

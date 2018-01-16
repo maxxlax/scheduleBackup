@@ -12,15 +12,15 @@ import javax.swing.JPanel;
 import javax.swing.JTextArea;
 
 import sales.DaySales;
+import sales.ShiftSale;
 import sales.WeeklySales;
 import scheduling.Day;
-import scheduling.ShiftCreator;
 
 @SuppressWarnings("serial")
 public class SalesPanel extends JPanel
 {
 	private WeeklySales weeklySales;
-	private ArrayList<Day> prioritizedSalesWeek;
+	private ArrayList<ShiftSale> prioritizedSalesWeek;
 	ArrayList<JTextArea> areas;
 	
 	public SalesPanel(MainPanel mainPanel)
@@ -33,7 +33,7 @@ public class SalesPanel extends JPanel
 		textPanel.setBounds(0, 0, 190, 550);
 
 		weeklySales = new WeeklySales();
-		setPrioritizedSalesWeek(weeklySales.createPrioritizedSalesWeek());
+		setPrioritizedSalesWeek(weeklySales.createShiftPriorityBasedOnSales());
 
 		ArrayList<JLabel> labels = new ArrayList<JLabel>();
 		labels.add(new JLabel("Sunday AM $", JLabel.CENTER));
@@ -129,10 +129,9 @@ public class SalesPanel extends JPanel
 					weeklySales.setSales(new DaySales(Integer.parseInt(areas.get(8).getText()), Integer.parseInt(areas.get(9).getText()), Day.Thursday));
 					weeklySales.setSales(new DaySales(Integer.parseInt(areas.get(10).getText()), Integer.parseInt(areas.get(11).getText()), Day.Friday));
 					weeklySales.setSales(new DaySales(Integer.parseInt(areas.get(12).getText()), Integer.parseInt(areas.get(13).getText()), Day.Saturday));
-					setPrioritizedSalesWeek(weeklySales.createPrioritizedSalesWeek());
-					ShiftCreator sc = new ShiftCreator(weeklySales);
+					setPrioritizedSalesWeek(weeklySales.createShiftPriorityBasedOnSales());
 					//System.out.println(ws.toString());
-					mainPanel.setInfo(weeklySales, prioritizedSalesWeek, sc);
+					mainPanel.setInfo(weeklySales, prioritizedSalesWeek);
 				}
 			}
 		});
@@ -143,14 +142,14 @@ public class SalesPanel extends JPanel
 	/**
 	 * @return the prioritizedSalesWeek
 	 */
-	public ArrayList<Day> getPrioritizedSalesWeek()
+	public ArrayList<ShiftSale> getPrioritizedSalesWeek()
 	{
 		return prioritizedSalesWeek;
 	}
 	/**
 	 * @param prioritizedSalesWeek the prioritizedSalesWeek to set
 	 */
-	public void setPrioritizedSalesWeek(ArrayList<Day> prioritizedSalesWeek)
+	public void setPrioritizedSalesWeek(ArrayList<ShiftSale> prioritizedSalesWeek)
 	{
 		this.prioritizedSalesWeek = prioritizedSalesWeek;
 	}
