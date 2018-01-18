@@ -89,22 +89,6 @@ public class MainPanel extends Toolbox
     employeePanel.nameChanged();
   }
 
-  public void addShift(Day day, String ampm, ShiftType type, int startTime, int endTime)
-  {
-    if (getNumType(type, day, ampm) < 8)
-    {
-      schedule.get(day).get(ampm).add(new Shift(startTime, endTime, day, type));
-      Collections.sort(schedule.get(day).get(ampm));
-      shiftsReady = true;
-      redrawSchedule();
-    }
-    else
-    {
-      // TODO JOptionPane to say those shifts are full
-      System.out.println("FULL");
-    }
-  }
-
   public void addEmployee(Employee employee)
   {
     employees.add(employee);
@@ -118,7 +102,24 @@ public class MainPanel extends Toolbox
     viewEmployeesPanel.addEmployee(employee);
   }
 
-  private int getNumType(ShiftType type, Day day, String ampm)
+  public boolean addShift(Day day, String ampm, ShiftType type, int startTime, int endTime)
+  {
+    if (getNumShiftType(type, day, ampm) < 8)
+    {
+      schedule.get(day).get(ampm).add(new Shift(startTime, endTime, day, type));
+      Collections.sort(schedule.get(day).get(ampm));
+      shiftsReady = true;
+      redrawSchedule();
+      return true;
+    }
+    else
+    {
+      notifyUser("Can't add any more of that type of shift, remove shifts by clicking the time and selecting remove");
+      return false;
+    }
+  }
+
+  private int getNumShiftType(ShiftType type, Day day, String ampm)
   {
     int counter = 0;
     for (Shift shift : schedule.get(day).get(ampm))
@@ -268,7 +269,6 @@ public class MainPanel extends Toolbox
     {
       employeesReady = false;
     }
-    // TODO Check Schedule for this emp and remove
     for (Day day : new Week())
     {
       for (Shift shift : schedule.get(day).get("am"))
@@ -307,7 +307,7 @@ public class MainPanel extends Toolbox
 
   public void notifyUser(String message)
   {
-    JOptionPane.showMessageDialog(null, message);
+    JOptionPane.showMessageDialog(this, message);
   }
 
   @SuppressWarnings("unused")
@@ -375,7 +375,6 @@ public class MainPanel extends Toolbox
     }
     catch (IOException e)
     {
-      // TODO Auto-generated catch block
       e.printStackTrace();
     }
   }

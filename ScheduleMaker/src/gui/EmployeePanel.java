@@ -254,7 +254,6 @@ public class EmployeePanel extends JPanel
         if (!nameNotFound())
         {
           mainPanel.removeEmployee(firstNameArea.getText() + " " + lastNameArea.getText());
-          // TODO Empty Fields
         }
       }
       else if (ae.getSource() == employees)

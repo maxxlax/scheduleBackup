@@ -56,7 +56,7 @@ public class Toolbox extends JPanel
 		emp.canDouble = canDouble;
 		emp.maxNumHours = maxNumHours;
 		emp.setAvailability(availability);
-		// TODO iterate shifts and ensure that emp can take on all shifts
+		// Iterate shifts and ensure that emp can take on all shifts
 		for (Day day : new Week())
 		{
 			for (Shift shift : schedule.get(day).get("am"))

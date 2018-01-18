@@ -90,12 +90,10 @@ public class AddShiftPanel extends JPanel
 					if (startTime < 9 || startTime > 20)
 					{
 						startArea.setBackground(Color.RED);
-						setError("Check Start Time");
 					}
 					else if (endTime < 12 || endTime > 22)
 					{
 						endArea.setBackground(Color.RED);
-						setError("Check End Time");
 					}
 					//Continue
 					else
@@ -113,7 +111,7 @@ public class AddShiftPanel extends JPanel
 							ampm = "pm";
 						for (Day day : new Week())
 						{
-							mainPanel.addShift(day, ampm, type, startTime, endTime);
+							if(!mainPanel.addShift(day, ampm, type, startTime, endTime)) break;
 						}
 					}
 				}
@@ -126,12 +124,6 @@ public class AddShiftPanel extends JPanel
 		add(editorPanel);
 	}
 	
-	private void setError(String string)
-	{
-		// TODO Auto-generated method stub
-		
-	}
-
   public void viewShiftEditor(Shift shift)
   {
     editorPanel.editShift(shift);

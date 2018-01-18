@@ -9,7 +9,7 @@ import java.util.ArrayList;
 import javax.swing.JButton;
 import javax.swing.JLabel;
 import javax.swing.JPanel;
-import javax.swing.JTextArea;
+import javax.swing.JTextField;
 
 import sales.DaySales;
 import sales.ShiftSale;
@@ -21,7 +21,7 @@ public class SalesPanel extends JPanel
 {
 	private WeeklySales weeklySales;
 	private ArrayList<ShiftSale> prioritizedSalesWeek;
-	ArrayList<JTextArea> areas;
+	ArrayList<JTextField> salesFields;
 	
 	public SalesPanel(MainPanel mainPanel)
 	{
@@ -51,26 +51,16 @@ public class SalesPanel extends JPanel
 		labels.add(new JLabel("Saturday AM $", JLabel.CENTER));
 		labels.add(new JLabel("Saturday PM $", JLabel.CENTER));
 
-		areas = new ArrayList<JTextArea>();
-		areas.add(new JTextArea(""));
-		areas.add(new JTextArea(""));
-		areas.add(new JTextArea(""));
-		areas.add(new JTextArea(""));
-		areas.add(new JTextArea(""));
-		areas.add(new JTextArea(""));
-		areas.add(new JTextArea(""));
-		areas.add(new JTextArea(""));
-		areas.add(new JTextArea(""));
-		areas.add(new JTextArea(""));
-		areas.add(new JTextArea(""));
-		areas.add(new JTextArea(""));
-		areas.add(new JTextArea(""));
-		areas.add(new JTextArea(""));
+		salesFields = new ArrayList<JTextField>();
+		for(int ii = 0; ii < 14; ii++)
+		{
+		  salesFields.add(new JTextField(""));
+		}
 
 		for (int ii = 0; ii < labels.size(); ii++)
 		{
 			textPanel.add(labels.get(ii));
-			textPanel.add(areas.get(ii));
+			textPanel.add(salesFields.get(ii));
 		}
 		add(textPanel);
 
@@ -86,49 +76,49 @@ public class SalesPanel extends JPanel
 			@Override
 			public void actionPerformed(ActionEvent arg0)
 			{
-				for (JTextArea a : areas)
+				for (JTextField jtf : salesFields)
 				{
-					if (a.getText() != null && !a.getText().equals(""))
+					if (jtf.getText() != null && !jtf.getText().equals(""))
 					{
 						try
 						{
-							int num = Integer.parseInt(a.getText());
+							int num = Integer.parseInt(jtf.getText());
 							if (num > 0)
 							{
-								a.setBackground(Color.GREEN);
+								jtf.setBackground(Color.GREEN);
 							}
 							else
 							{
-								a.setBackground(Color.RED);
+								jtf.setBackground(Color.RED);
 							}
 						}
 						catch (NumberFormatException e)
 						{
-							a.setBackground(Color.RED);
+							jtf.setBackground(Color.RED);
 						}
 					}
 					else
 					{
-						a.setBackground(Color.RED);
+						jtf.setBackground(Color.RED);
 					}
 				}
 				boolean done = true;
-				for (JTextArea a : areas)
+				for (JTextField jtf : salesFields)
 				{
-					if (!a.getBackground().equals(Color.GREEN))
+					if (!jtf.getBackground().equals(Color.GREEN))
 					{
 						done = false;
 					}
 				}
 				if (done)
 				{
-					weeklySales.setSales(new DaySales(Integer.parseInt(areas.get(0).getText()), Integer.parseInt(areas.get(1).getText()), Day.Sunday));
-					weeklySales.setSales(new DaySales(Integer.parseInt(areas.get(2).getText()), Integer.parseInt(areas.get(3).getText()), Day.Monday));
-					weeklySales.setSales(new DaySales(Integer.parseInt(areas.get(4).getText()), Integer.parseInt(areas.get(5).getText()), Day.Tuesday));
-					weeklySales.setSales(new DaySales(Integer.parseInt(areas.get(6).getText()), Integer.parseInt(areas.get(7).getText()), Day.Wednesday));
-					weeklySales.setSales(new DaySales(Integer.parseInt(areas.get(8).getText()), Integer.parseInt(areas.get(9).getText()), Day.Thursday));
-					weeklySales.setSales(new DaySales(Integer.parseInt(areas.get(10).getText()), Integer.parseInt(areas.get(11).getText()), Day.Friday));
-					weeklySales.setSales(new DaySales(Integer.parseInt(areas.get(12).getText()), Integer.parseInt(areas.get(13).getText()), Day.Saturday));
+					weeklySales.setSales(new DaySales(Integer.parseInt(salesFields.get(0).getText()), Integer.parseInt(salesFields.get(1).getText()), Day.Sunday));
+					weeklySales.setSales(new DaySales(Integer.parseInt(salesFields.get(2).getText()), Integer.parseInt(salesFields.get(3).getText()), Day.Monday));
+					weeklySales.setSales(new DaySales(Integer.parseInt(salesFields.get(4).getText()), Integer.parseInt(salesFields.get(5).getText()), Day.Tuesday));
+					weeklySales.setSales(new DaySales(Integer.parseInt(salesFields.get(6).getText()), Integer.parseInt(salesFields.get(7).getText()), Day.Wednesday));
+					weeklySales.setSales(new DaySales(Integer.parseInt(salesFields.get(8).getText()), Integer.parseInt(salesFields.get(9).getText()), Day.Thursday));
+					weeklySales.setSales(new DaySales(Integer.parseInt(salesFields.get(10).getText()), Integer.parseInt(salesFields.get(11).getText()), Day.Friday));
+					weeklySales.setSales(new DaySales(Integer.parseInt(salesFields.get(12).getText()), Integer.parseInt(salesFields.get(13).getText()), Day.Saturday));
 					setPrioritizedSalesWeek(weeklySales.createShiftPriorityBasedOnSales());
 					//System.out.println(ws.toString());
 					mainPanel.setInfo(weeklySales, prioritizedSalesWeek);
@@ -163,9 +153,9 @@ public class SalesPanel extends JPanel
     this.weeklySales = ws;
     for(DaySales ds: ws.getSales())
     {
-      areas.get(ai).setText("" + ds.getAmSales());
+      salesFields.get(ai).setText("" + ds.getAmSales());
       ai++;
-      areas.get(ai).setText("" + ds.getPmSales());
+      salesFields.get(ai).setText("" + ds.getPmSales());
       ai++;
     }
   }

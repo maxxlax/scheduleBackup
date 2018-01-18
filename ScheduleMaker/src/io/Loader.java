@@ -41,7 +41,7 @@ public class Loader
     }
     catch (FileNotFoundException fnf)
     {
-      // TODO JOptionPane to announce fnf
+      mainPanel.notifyUser("Unable to load, could not find active save file in " + SAVE_FILE_NAME);
     }
   }
 
@@ -101,8 +101,6 @@ public class Loader
 
   private void finishType()
   {
-    // TODO Set booleans to flag when a type is complete
-    
     switch (type)
     {
       case SALES:

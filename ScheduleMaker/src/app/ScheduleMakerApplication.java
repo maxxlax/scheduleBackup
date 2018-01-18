@@ -1,8 +1,6 @@
-package gui;
+package app;
 
 import javax.swing.SwingUtilities;
-
-import app.MultimediaApplication;
 
 public class ScheduleMakerApplication extends MultimediaApplication
 {
