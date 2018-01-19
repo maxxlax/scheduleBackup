@@ -132,7 +132,7 @@ public class Scheduler
 	private boolean tryShifts(Employee emp, Day day, String ampm)
 	{
 		boolean timePeriodFilled = false;
-		for (Shift shift : mainPanel.schedule.get(day).get(ampm))
+		for (Shift shift : mainPanel.getSchedule().get(day).get(ampm))
 		{
 			// Filled shift
 			if (shift.filled)
@@ -273,14 +273,14 @@ public class Scheduler
 	{
 		for (Day day : new Week())
 		{
-			for (Shift shift : mainPanel.schedule.get(day).get("am"))
+			for (Shift shift : mainPanel.getSchedule().get(day).get("am"))
 			{
 				if (!shift.filled)
 				{
 					return -1;
 				}
 			}
-			for (Shift shift : mainPanel.schedule.get(day).get("pm"))
+			for (Shift shift : mainPanel.getSchedule().get(day).get("pm"))
 			{
 				if (!shift.filled)
 				{

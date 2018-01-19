@@ -43,9 +43,9 @@ public class Saver
   {
     outputFile.println("Sales");
     System.out.println("Sales");
-    if(mainPanel.salesReady)
+    if(mainPanel.isSalesReady())
     {
-      WeeklySales ws = mainPanel.salesPanel.getWs();
+      WeeklySales ws = mainPanel.getSalesPanel().getWs();
       for(DaySales ds: ws.getSales())
       {
         outputFile.println(ds.getDay() + "|" + ds.getAmSales() + "|" + ds.getPmSales());
@@ -59,9 +59,9 @@ public class Saver
   {
     outputFile.println("Employees");
     System.out.println("Employees");
-    if(mainPanel.employeesReady)
+    if(mainPanel.getEmployeeList().isReady())
     {
-      for(Employee employee: mainPanel.employees)
+      for(Employee employee: mainPanel.getEmployeeList())
       {
         outputFile.println(employee.toSaveString());
         System.out.println(employee.toSaveString());
@@ -78,14 +78,14 @@ public class Saver
     {
       outputFile.println("am");
       System.out.println("am");
-      for(Shift shift: mainPanel.schedule.get(day).get("am"))
+      for(Shift shift: mainPanel.getSchedule().get(day).get("am"))
       {
         outputFile.println(shift.toSaveString());
         System.out.println(shift.toSaveString());
       }
       outputFile.println("pm");
       System.out.println("pm");
-      for(Shift shift: mainPanel.schedule.get(day).get("pm"))
+      for(Shift shift: mainPanel.getSchedule().get(day).get("pm"))
       {
         outputFile.println(shift.toSaveString());
         System.out.println(shift.toSaveString());

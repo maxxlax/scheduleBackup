@@ -6,7 +6,7 @@ import javax.swing.JScrollPane;
 @SuppressWarnings("serial")
 public class ViewShiftPanel extends JPanel
 {
-	DragDropList shiftList;
+	MyDragDropList shiftList;
 	JScrollPane shiftPane;
 
 	public ViewShiftPanel(MainPanel mainPanel)
@@ -14,7 +14,7 @@ public class ViewShiftPanel extends JPanel
 		setLayout(null);
 		setBackground(mainPanel.red);
 		
-		shiftList = new DragDropList(mainPanel);
+		shiftList = new MyDragDropList(mainPanel);
 		shiftList.addShift("AM Sunday");
 		shiftList.addShift("PM Sunday");
 		shiftList.addShift("AM Monday");

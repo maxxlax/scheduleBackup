@@ -9,9 +9,10 @@ import javax.swing.event.ListSelectionEvent;
 import javax.swing.event.ListSelectionListener;
 
 import employee.Employee;
+import employee.EmployeeListObserver;
 
 @SuppressWarnings("serial")
-public class MyDragDropList extends JList<String> implements KeyListener
+public class MyDragDropList extends JList<String> implements KeyListener, EmployeeListObserver
 {
   private DefaultListModel<String> model;
   private int currentSelected = -1;
@@ -80,7 +81,7 @@ public class MyDragDropList extends JList<String> implements KeyListener
 
   private void reorganizeEmployees()
   {
-      mainPanel.reorganizeEmployees(model);
+      mainPanel.getEmployeeList().reorganizeEmployees(model);
   }
 
   @Override
@@ -96,5 +97,17 @@ public class MyDragDropList extends JList<String> implements KeyListener
   public void removeEmployee(String string)
   {
     model.removeElement(string);
+  }
+
+  @Override
+  public void updateAdd(Employee employee)
+  {
+    addEmployee(employee);
+  }
+
+  @Override
+  public void updateRemove(Employee employee)
+  {
+    removeEmployee(employee);
   }
 }

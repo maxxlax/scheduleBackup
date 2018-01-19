@@ -82,7 +82,7 @@ public class Loader
               addSale(stoken);
               break;
             case EMPLOYEES:
-              mainPanel.addEmployee(parseEmployee(stoken));
+              mainPanel.getEmployeeList().add(parseEmployee(stoken));
               break;
             case AMSCHEDULE:
               parseScheduleItem("am", stoken);
@@ -106,7 +106,7 @@ public class Loader
       case SALES:
         salesLoaded = true;
         printWS();
-        mainPanel.salesPanel.setWs(weeklySales);
+        mainPanel.getSalesPanel().setWs(weeklySales);
         break;
       case EMPLOYEES:
         employeesLoaded = true;
@@ -139,7 +139,7 @@ public class Loader
     System.out.println("Loading... EMPLOYEES");
     if (loadPrinting)
     {
-      for (Employee emp : mainPanel.employees)
+      for (Employee emp : mainPanel.getEmployeeList())
       {
         System.out.println(emp.toSaveString());
       }
@@ -155,12 +155,12 @@ public class Loader
       for (Day day : new Week())
       {
         System.out.println(day);
-        for (Shift s : mainPanel.schedule.get(day).get("am"))
+        for (Shift s : mainPanel.getSchedule().get(day).get("am"))
         {
           System.out.println("\t" + s.toSaveString());
         }
         System.out.println();
-        for (Shift s : mainPanel.schedule.get(day).get("pm"))
+        for (Shift s : mainPanel.getSchedule().get(day).get("pm"))
         {
           System.out.println("\t" + s.toSaveString());
         }
@@ -224,7 +224,7 @@ public class Loader
     if (filled && employeesLoaded)
     {
       empName = stoken.nextToken();
-      for (Employee e : mainPanel.employees)
+      for (Employee e : mainPanel.getEmployeeList())
       {
         if (e.fullName.equals(empName))
         {
@@ -239,8 +239,8 @@ public class Loader
         }
       }
     }
-    mainPanel.schedule.get(day).get(ampm).add(shift);
-    Collections.sort(mainPanel.schedule.get(day).get(ampm));
-    mainPanel.shiftsReady = true;
+    mainPanel.getSchedule().get(day).get(ampm).add(shift);
+    Collections.sort(mainPanel.getSchedule().get(day).get(ampm));
+    mainPanel.setShiftsReady(true);
   }
 }

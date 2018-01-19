@@ -5,59 +5,69 @@ import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Collections;
 
-import javax.swing.DefaultListModel;
 import javax.swing.ImageIcon;
 import javax.swing.JLabel;
 import javax.swing.JOptionPane;
+import javax.swing.JPanel;
 import javax.swing.JTabbedPane;
 import javax.swing.UIManager;
 import javax.swing.UnsupportedLookAndFeelException;
 
 import employee.Employee;
+import employee.EmployeeList;
 import io.Loader;
 import io.Saver;
 import sales.ShiftSale;
 import sales.WeeklySales;
 import scheduling.Day;
+import scheduling.Schedule;
 import scheduling.Scheduler;
 import scheduling.Shift;
 import scheduling.ShiftType;
 import scheduling.Week;
 
 @SuppressWarnings("serial")
-public class MainPanel extends Toolbox
+public class MainPanel extends JPanel
 {
   public final Color red = new Color(207, 10, 44);
   public final Color black = new Color(50, 50, 50);
   public final Color white = new Color(240, 240, 240);
   public final String SAVE_FILE_NAME = "ScheduleSaveData.txt";
 
-  public SalesPanel salesPanel;
-  public SchedulePanel schedulePanel;
-  public JTabbedPane jtp;
-  public EmployeePanel employeePanel;
-  public ViewShiftPanel setShiftPanel;
-  public AddShiftPanel addShiftPanel;
-  public Loader loader;
-  public JLabel imageLabel;
-  public ImageIcon image;
+  private Schedule schedule;
+  private EmployeeList employeeList;
+  private SalesPanel salesPanel;
+  private EmployeePanel employeePanel;
+  private ViewEmployeesPanel viewEmployeesPanel;
+  private AddShiftPanel addShiftPanel;
+  private ViewShiftPanel viewShiftPanel;
+  private CreateSchedulePanel createSchedulePanel;
+  private SchedulePanel schedulePanel;
+  private JTabbedPane jtp;
+  private Loader loader;
+  private JLabel imageLabel;
+  private ImageIcon image;
   private String editShiftAMPM;
   private int editShiftID;
+  private ArrayList<ShiftSale> prioritizedSalesWeek;
+  private Scheduler scheduler;
+  private boolean salesReady, shiftsReady;
+  @SuppressWarnings("unused")
+  private WeeklySales weeklySales;
 
   public MainPanel()
   {
-    super();
     setLayout(null);
     setLandF(1);
     setBounds(0, 0, 1000, 677);
     setVisible(true);
     setBackground(black);
 
-    employees = new ArrayList<Employee>();
+    setSchedule(new Schedule());
+    setEmployeeList(new EmployeeList());
 
-    salesReady = false;
-    employeesReady = false;
-    shiftsReady = false;
+    setSalesReady(false);
+    setShiftsReady(false);
 
     schedulePanel = new SchedulePanel(this);
     add(schedulePanel);
@@ -65,18 +75,18 @@ public class MainPanel extends Toolbox
     salesPanel = new SalesPanel(this);
     employeePanel = new EmployeePanel(this);
     viewEmployeesPanel = new ViewEmployeesPanel(this);
-    setShiftPanel = new ViewShiftPanel(this);
+    viewShiftPanel = new ViewShiftPanel(this);
     createSchedulePanel = new CreateSchedulePanel(this, schedulePanel);
     addShiftPanel = new AddShiftPanel(this);
 
     jtp = new JTabbedPane();
     jtp.setTabPlacement(JTabbedPane.LEFT);
     jtp.setBounds(0, 0, 300, 677);
-    jtp.addTab("Enter Sales", salesPanel);
+    jtp.addTab("Enter Sales", getSalesPanel());
     jtp.addTab("Add Employees", employeePanel);
     jtp.addTab("View Employees", viewEmployeesPanel);
     jtp.addTab("Add Shifts", addShiftPanel);
-    //jtp.addTab("View Shifts", setShiftPanel);
+    jtp.addTab("View Shifts", viewShiftPanel);
     jtp.addTab("Schedule", createSchedulePanel);
     add(jtp);
 
@@ -89,76 +99,51 @@ public class MainPanel extends Toolbox
     employeePanel.nameChanged();
   }
 
-  public void addEmployee(Employee employee)
-  {
-    employees.add(employee);
-    employeePanel.employees.addItem(employee);
-    if (!newEmployeeRemoved)
-    {
-      employeePanel.employees.removeItemAt(0);
-      newEmployeeRemoved = true;
-    }
-    employeesReady = true;
-    viewEmployeesPanel.addEmployee(employee);
-  }
-
   public boolean addShift(Day day, String ampm, ShiftType type, int startTime, int endTime)
   {
-    if (getNumShiftType(type, day, ampm) < 8)
+    if (schedule.getNumShiftType(type, day, ampm) < 8)
     {
-      schedule.get(day).get(ampm).add(new Shift(startTime, endTime, day, type));
-      Collections.sort(schedule.get(day).get(ampm));
-      shiftsReady = true;
+      getSchedule().get(day).get(ampm).add(new Shift(startTime, endTime, day, type));
+      Collections.sort(getSchedule().get(day).get(ampm));
+      setShiftsReady(true);
       redrawSchedule();
       return true;
     }
     else
     {
-      notifyUser("Can't add any more of that type of shift, remove shifts by clicking the time and selecting remove");
+      notifyUser(
+          "Can't add any more of that type of shift, remove shifts by clicking the time and selecting remove");
       return false;
     }
-  }
-
-  private int getNumShiftType(ShiftType type, Day day, String ampm)
-  {
-    int counter = 0;
-    for (Shift shift : schedule.get(day).get(ampm))
-    {
-      if (shift.type.equals(type))
-      {
-        counter++;
-      }
-    }
-    return counter;
   }
 
   public void redrawSchedule()
   {
     schedulePanel.emptyFillers();
-    schedulePanel.drawShifts(schedule);
+    schedulePanel.drawShifts(getSchedule());
   }
 
-  public void setInfo(WeeklySales ws, ArrayList<ShiftSale> prioritizedSalesWeek)
+  public void setInfo(WeeklySales weeklySales, ArrayList<ShiftSale> prioritizedSalesWeek)
   {
-    this.ws = ws;
+    this.weeklySales = weeklySales;
     this.prioritizedSalesWeek = prioritizedSalesWeek;
-    salesReady = true;
+    setSalesReady(true);
   }
 
   public void fillOpenShifts()
   {
-    if (employees.size() == 0 && employeesReady)
+    if (getEmployeeList().size() == 0 && employeeList.isReady())
     {
       notifyUser("No Employees Have Been Added");
     }
-    else if ((schedule.get(Day.Sunday).get("am").size() == 0
-        && schedule.get(Day.Sunday).get("pm").size() == 0) && shiftsReady)
+    else if ((getSchedule().get(Day.Sunday).get("am").size() == 0
+        && getSchedule().get(Day.Sunday).get("pm").size() == 0) && isShiftsReady())
     {
       notifyUser("No Shifts Have Been Added");
     }
     else
     {
-      scheduler = new Scheduler(employees, this);
+      scheduler = new Scheduler(getEmployeeList(), this);
       scheduler.schedulePrioritizedWeek(prioritizedSalesWeek);
       redrawSchedule();
     }
@@ -188,16 +173,16 @@ public class MainPanel extends Toolbox
     for (Day day : new Week())
     {
       // Subtract difference shift hours from current hours
-      Shift s = schedule.get(day).get(editShiftAMPM).get(editShiftID);
+      Shift s = getSchedule().get(day).get(editShiftAMPM).get(editShiftID);
       if (s.filled)
       {
         s.employee.currentHours -= s.endTime - s.startTime;
         s.employee.currentHours += end - start;
       }
       // Edit the shift
-      schedule.get(day).get(editShiftAMPM).get(editShiftID).startTime = start;
-      schedule.get(day).get(editShiftAMPM).get(editShiftID).endTime = end;
-      Collections.sort(schedule.get(day).get(editShiftAMPM));
+      getSchedule().get(day).get(editShiftAMPM).get(editShiftID).startTime = start;
+      getSchedule().get(day).get(editShiftAMPM).get(editShiftID).endTime = end;
+      Collections.sort(getSchedule().get(day).get(editShiftAMPM));
     }
     redrawSchedule();
   }
@@ -207,78 +192,53 @@ public class MainPanel extends Toolbox
     for (Day day : new Week())
     {
       // Subtract shift hours from current hours
-      Shift s = schedule.get(day).get(ampm).get(i);
+      Shift s = getSchedule().get(day).get(ampm).get(i);
       if (s.filled)
       {
         s.employee.currentHours -= s.endTime - s.startTime;
       }
       // Remove the shift
-      schedule.get(day).get(ampm).remove(i);
+      getSchedule().get(day).get(ampm).remove(i);
     }
     redrawSchedule();
-  }
-
-  /**
-   * Removes employees from the list and replaces them in the order that the user has set.
-   * 
-   * @param listModel
-   */
-  public void reorganizeEmployees(DefaultListModel<String> listModel)
-  {
-    for (int ii = 0; ii < listModel.size(); ii++)
-    {
-      Employee emp = employees.remove(employees.indexOf(new Employee(listModel.get(ii))));
-      employees.add(emp);
-    }
-
   }
 
   public void viewEmployee(Employee employee)
   {
     jtp.setSelectedIndex(1);
-    employeePanel.setSelectedEmployee(employee);
+    employeePanel.getEmployeeBox().setSelectedItem(employee);
   }
 
   public void removeEmployee(String fullName)
   {
     Employee emp = null;
-    ArrayList<Employee> copyList = new ArrayList<Employee>(employees);
+    ArrayList<Employee> copyList = new ArrayList<Employee>(getEmployeeList());
     for (Employee e : copyList)
     {
       if (e.fullName.equals(fullName))
       {
         emp = e;
-        employees.remove(e);
+        getEmployeeList().remove(e);
       }
     }
     if (emp == null)
     {
-      JOptionPane.showMessageDialog(null, "Unable to find employee " + fullName, "Error",
-          JOptionPane.INFORMATION_MESSAGE);
+      notifyUser("Unable to find employee " + fullName);
     }
     else
     {
-      if (employees.size() == 0)
-      {
-        addEmployee(employeePanel.newEmployee);
-      }
-      employeePanel.employees.removeItem(emp);
       viewEmployeesPanel.removeEmployee(emp);
-    }
-    if (employees.size() == 0)
-    {
-      employeesReady = false;
     }
     for (Day day : new Week())
     {
-      for (Shift shift : schedule.get(day).get("am"))
+      for (Shift shift : getSchedule().get(day).get("am"))
       {
         if (shift.employee.fullName.equals(fullName))
         {
           shift.empty();
         }
       }
-      for (Shift shift : schedule.get(day).get("pm"))
+      for (Shift shift : getSchedule().get(day).get("pm"))
       {
         if (shift.employee.fullName.equals(fullName))
         {
@@ -293,12 +253,12 @@ public class MainPanel extends Toolbox
   {
     for (Day day : new Week())
     {
-      for (Shift shift : schedule.get(day).get("am"))
+      for (Shift shift : getSchedule().get(day).get("am"))
       {
         shift.empty();
       }
 
-      for (Shift shift : schedule.get(day).get("pm"))
+      for (Shift shift : getSchedule().get(day).get("pm"))
       {
         shift.empty();
       }
@@ -337,13 +297,13 @@ public class MainPanel extends Toolbox
     availabilityWeek.add(new int[] {10, 23});
     availabilityWeek.add(new int[] {-1, -1});
     availabilityWeek.add(new int[] {-1, -1});
-    addEmployee(new Employee("Jake", "Croston", false, true, true, 40, availabilityWeek));
-    addEmployee(new Employee("John", "Doe", true, true, false, 39, availabilityAll));
-    addEmployee(new Employee("Jim", "Halpert", true, true, true, 39, availabilityAll));
-    addEmployee(new Employee("Jill", "Dupuis", true, false, true, 39, availabilityAll));
-    addEmployee(new Employee("Drake", "Onsair", true, true, true, 39, availabilityWeekends));
-    addEmployee(new Employee("Jess", "Spencer", true, false, false, 39, availabilityAll));
-    addEmployee(new Employee("Tori", "Atkins", true, false, false, 39, availabilityWeek));
+    employeeList.add(new Employee("Jake", "Croston", false, true, true, 40, availabilityWeek));
+    employeeList.add(new Employee("John", "Doe", true, true, false, 39, availabilityAll));
+    employeeList.add(new Employee("Jim", "Halpert", true, true, true, 39, availabilityAll));
+    employeeList.add(new Employee("Jill", "Dupuis", true, false, true, 39, availabilityAll));
+    employeeList.add(new Employee("Drake", "Onsair", true, true, true, 39, availabilityWeekends));
+    employeeList.add(new Employee("Jess", "Spencer", true, false, false, 39, availabilityAll));
+    employeeList.add(new Employee("Tori", "Atkins", true, false, false, 39, availabilityWeek));
   }
 
   public void setLandF(int value)
@@ -377,5 +337,108 @@ public class MainPanel extends Toolbox
     {
       e.printStackTrace();
     }
+  }
+
+  /**
+   * @return the salesPanel
+   */
+  public SalesPanel getSalesPanel()
+  {
+    return salesPanel;
+  }
+
+  /**
+   * @param salesPanel
+   *          the salesPanel to set
+   */
+  public void setSalesPanel(SalesPanel salesPanel)
+  {
+    this.salesPanel = salesPanel;
+  }
+
+  /**
+   * @return the employees
+   */
+  public EmployeeList getEmployeeList()
+  {
+    return employeeList;
+  }
+
+  /**
+   * @param employeeList
+   *          the employees to set
+   */
+  public void setEmployeeList(EmployeeList employeeList)
+  {
+    this.employeeList = employeeList;
+  }
+
+  /**
+   * @return the schedule
+   */
+  public Schedule getSchedule()
+  {
+    return schedule;
+  }
+
+  /**
+   * @param schedule
+   *          the schedule to set
+   */
+  public void setSchedule(Schedule schedule)
+  {
+    this.schedule = schedule;
+  }
+  /*
+   * public void editEmployee(String firstName, String lastName, boolean isInshop, boolean isDriver,
+   * boolean canDouble, int maxNumHours, ArrayList<int[]> availability) { int index =
+   * getEmployeeList() .indexOf(new Employee(firstName, lastName, isInshop, isDriver, canDouble,
+   * maxNumHours, availability)); Employee emp = getEmployeeList().get(index); emp.firstName =
+   * firstName; emp.lastName = lastName; emp.isInshop = isInshop; emp.isDriver = isDriver;
+   * emp.canDouble = canDouble; emp.maxNumHours = maxNumHours; emp.setAvailability(availability); //
+   * Iterate shifts and ensure that emp can take on all shifts for (Day day : new Week()) { for
+   * (Shift shift : getSchedule().get(day).get("am")) { if (shift.employee.fullName.equals(firstName
+   * + " " + lastName)) { if (!emp.isAvailable(shift)) { shift.empty(); } } } for (Shift shift :
+   * getSchedule().get(day).get("pm")) { if (shift.employee.fullName.equals(firstName + " " +
+   * lastName)) {
+   * 
+   * } } } }
+   */
+
+  /**
+   * @return the salesReady
+   */
+  public boolean isSalesReady()
+  {
+    return salesReady;
+  }
+
+  /**
+   * @param salesReady the salesReady to set
+   */
+  public void setSalesReady(boolean salesReady)
+  {
+    this.salesReady = salesReady;
+  }
+
+  /**
+   * @return the shiftsReady
+   */
+  public boolean isShiftsReady()
+  {
+    return shiftsReady;
+  }
+
+  /**
+   * @param shiftsReady the shiftsReady to set
+   */
+  public void setShiftsReady(boolean shiftsReady)
+  {
+    this.shiftsReady = shiftsReady;
+  }
+
+  public boolean isReady()
+  {
+    return isSalesReady() && employeeList.isReady() && isShiftsReady();
   }
 }
