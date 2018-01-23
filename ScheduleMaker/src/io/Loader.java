@@ -17,7 +17,7 @@ import scheduling.Shift;
 import scheduling.ShiftType;
 import scheduling.Week;
 
-public class Loader
+public class Loader implements Runnable
 {
   BufferedReader fileReader;
   MainPanel mainPanel;
@@ -45,6 +45,17 @@ public class Loader
     }
   }
 
+  public void run()
+  {
+    try
+    {
+      loadFiles();
+    }
+    catch (IOException e)
+    {
+      e.printStackTrace();
+    }
+  }
   public void loadFiles() throws IOException
   {
     String line;
@@ -165,7 +176,7 @@ public class Loader
           System.out.println("\t" + s.toSaveString());
         }
       }
-      System.out.println("|\n");
+      System.out.println("\t|\n");
     }
   }
 

@@ -1,20 +1,25 @@
 package gui;
 
+import java.util.ArrayList;
+
 import javax.swing.JPanel;
 import javax.swing.JScrollPane;
+
+import modList.MyShiftModList;
+import scheduling.ShiftPeriod;
 
 @SuppressWarnings("serial")
 public class ViewShiftPanel extends JPanel
 {
-	MyDragDropList shiftList;
-	JScrollPane shiftPane;
+	private MyShiftModList shiftList;
+	private JScrollPane shiftPane;
 
 	public ViewShiftPanel(MainPanel mainPanel)
 	{
 		setLayout(null);
 		setBackground(mainPanel.red);
 		
-		shiftList = new MyDragDropList(mainPanel);
+		shiftList = new MyShiftModList(mainPanel);
 		shiftList.addShift("AM Sunday");
 		shiftList.addShift("PM Sunday");
 		shiftList.addShift("AM Monday");
@@ -33,4 +38,23 @@ public class ViewShiftPanel extends JPanel
 		shiftPane.setBounds(10, 10, 170, 615);
 		add(shiftPane);
 	}
+
+  public void setElements(ArrayList<ShiftPeriod> prioritizedSalesWeek)
+  {
+    ArrayList<String> shifts = new ArrayList<String>();
+    for(ShiftPeriod ss: prioritizedSalesWeek)
+    {
+      String s = "";
+      if(ss.getShift() == 'a')
+      {
+        s += "AM ";
+      }
+      else
+      {
+        s += "PM ";
+      }
+      shifts.add(s + ss.getDay());
+    }
+    shiftList.setElements(shifts);
+  }
 }

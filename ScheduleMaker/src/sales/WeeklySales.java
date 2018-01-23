@@ -4,6 +4,7 @@ import java.util.ArrayList;
 import java.util.Collections;
 
 import scheduling.Day;
+import scheduling.ShiftPeriod;
 
 public class WeeklySales
 {
@@ -77,7 +78,7 @@ public class WeeklySales
     return s;
   }
 
-  public ArrayList<ShiftSale> createShiftPriorityBasedOnSales()
+  public ArrayList<ShiftPeriod> createShiftPriorityBasedOnSales()
   {
     ArrayList<ShiftSale> priSales = new ArrayList<ShiftSale>();
     for (DaySales ds : sales)
@@ -86,7 +87,13 @@ public class WeeklySales
       priSales.add(ds.getPmSales());
     }
     Collections.sort(priSales);
-    return priSales;
+    
+    ArrayList<ShiftPeriod> shiftTimes = new ArrayList<ShiftPeriod>();
+    for(ShiftSale ss: priSales)
+    {
+      shiftTimes.add(new ShiftPeriod(ss.getDay(), ss.getShift()));
+    }
+    return shiftTimes;
   }
 
   public String toSaveString()

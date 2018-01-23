@@ -72,7 +72,6 @@ public class EmployeeBox extends JComboBox<Employee> implements EmployeeListObse
   @Override
   public void updateRemove(Employee employee)
   {
-    // TODO Auto-generated method stub
-
+    removeItem(employee);
   }
 }

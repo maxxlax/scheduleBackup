@@ -11,7 +11,7 @@ import scheduling.Day;
 import scheduling.Shift;
 import scheduling.Week;
 
-public class Saver
+public class Saver implements Runnable
 {
 	PrintWriter outputFile;
 	MainPanel mainPanel;
@@ -92,5 +92,11 @@ public class Saver
       }
     }
     outputFile.println("|");
+  }
+
+  @Override
+  public void run()
+  {
+    saveAll();
   }
 }

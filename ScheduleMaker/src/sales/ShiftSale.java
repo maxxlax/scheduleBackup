@@ -1,18 +1,26 @@
 package sales;
 
 import scheduling.Day;
+import scheduling.ShiftPeriod;
 
-public class ShiftSale implements Comparable<ShiftSale>
+public class ShiftSale extends ShiftPeriod implements Comparable<ShiftSale>
 {
-  public Day day;
-  public char shift;
-  public int sale;
+  private int sale;
   
   public ShiftSale(Day day, char shift, int sale)
   {
-    this.day = day;
+    super(day, shift);
     this.sale = sale;
-    this.shift = shift;
+  }
+
+  public int getSale()
+  {
+    return sale;
+  }
+
+  public void setSale(int sale)
+  {
+    this.sale = sale;
   }
 
   @Override
@@ -20,11 +28,11 @@ public class ShiftSale implements Comparable<ShiftSale>
   {
     if(sale < ss.sale)
     {
-      return -1;
+      return 1;
     }
     else if(sale > ss.sale)
     {
-      return 1;
+      return -1;
     }
     return 0;
   }

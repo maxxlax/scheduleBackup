@@ -18,14 +18,13 @@ import scheduling.Week;
 @SuppressWarnings("serial")
 public class AddShiftPanel extends JPanel
 {
-	JRadioButton irb, drb;
-	ButtonGroup bg;
-	JLabel startEnd;
-	JTextField startArea, endArea;
-	JButton addShift;
-	ShiftEditor editorPanel;
+  private JRadioButton irb, drb;
+	private ButtonGroup bg;
+	private JLabel startEnd;
+	private JTextField startArea, endArea;
+	private JButton addShift;
 
-	public AddShiftPanel(MainPanel mainPanel)
+	public AddShiftPanel(MainPanel mainPanel, ShiftEditor shiftEditor)
 	{
 		setLayout(null);
 		setBackground(mainPanel.red);
@@ -111,7 +110,7 @@ public class AddShiftPanel extends JPanel
 							ampm = "pm";
 						for (Day day : new Week())
 						{
-							if(!mainPanel.addShift(day, ampm, type, startTime, endTime)) break;
+							if(!mainPanel.addShift(new Shift(startTime, endTime, day, type), ampm)) break;
 						}
 					}
 				}
@@ -119,13 +118,27 @@ public class AddShiftPanel extends JPanel
 		});
 		add(addShift);
 		
-		editorPanel = new ShiftEditor(mainPanel, mainPanel.black, mainPanel.red, mainPanel.white);
-		editorPanel.setBounds(1, 390, 189, 250);
-		add(editorPanel);
+		shiftEditor.setBounds(1, 390, 189, 250);
+		add(shiftEditor);
 	}
-	
-  public void viewShiftEditor(Shift shift)
+
+  public void switchToShiftEditor()
   {
-    editorPanel.editShift(shift);
+    addShift.setEnabled(false);
+    irb.setEnabled(false);
+    drb.setEnabled(false);
+    startArea.setText("");
+    endArea.setText("");
+    startArea.setEditable(false);
+    endArea.setEditable(false);
+  }
+  
+  public void switchOffShiftEditor()
+  {
+    addShift.setEnabled(true);
+    irb.setEnabled(true);
+    drb.setEnabled(true);
+    startArea.setEditable(true);
+    endArea.setEditable(true);
   }
 }

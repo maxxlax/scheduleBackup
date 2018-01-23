@@ -1,11 +1,20 @@
 Help
-1
-2
-3
-4
-5
-6
-7
-8
-9
-10
+   Sales
+    1. This is where you enter average sales for each shift.
+    2. Be sure to press confirm when you have finished or your info will not save and you will not be able to generate a schedule.
+    3. All blanks must be filled with positive numbers.
+   Employees
+      1. This is where you maintain your employees by editing, adding, and removing employees.
+      2. To bring up an employees information, click the drop down and select their name.
+     Adding an Employee
+      1. Must enter first and last name.
+      2. Must choose Inshop or Driver.
+      3. Must enter maximum hours that the employee can be scheduled for per week.
+      6. For availability you must enter hours in 24 hr format (9 = 9am and 15 = 3pm)
+      7. The default if a person has no availability for a day is -1 in both start and end
+      8. You must have a start and end between 1 and 23 or start of -1 and end of -1 (Can't use one positive and one -1)
+     Editing an Employee
+      1. Start with an existing employee by choosing one from the list or entering the existing employee's first and last name
+      2. The "Add Employee" button will change to "Edit Employee"
+      3. Change any information that you please and press the "Edit Employee" button
+    

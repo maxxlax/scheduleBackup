@@ -42,7 +42,7 @@ public class Scheduler
 	 * @param prioritizedSalesWeek
 	 * @return
 	 */
-	public int schedulePrioritizedWeek(ArrayList<ShiftSale> prioritizedSalesWeek)
+	public int schedulePrioritizedWeek(ArrayList<ShiftPeriod> prioritizedSalesWeek)
 	{
 		// Employees
 		for (Employee emp : employees)
@@ -54,7 +54,7 @@ public class Scheduler
 			}
 			else
 			{
-				for (ShiftSale ss : prioritizedSalesWeek)
+				for (ShiftPeriod ss : prioritizedSalesWeek)
 				{
 					iterateShifts(emp, ss.day);
 				}

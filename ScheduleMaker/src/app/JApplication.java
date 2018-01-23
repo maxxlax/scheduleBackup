@@ -4,6 +4,8 @@ import java.awt.*;
 import java.awt.event.*;
 import javax.swing.*;
 
+import io.MyImageCreator;
+
 /**
  * A JApplication is a swing application that looks and behaves like a
  * JApplet
@@ -56,7 +58,7 @@ public abstract class      JApplication
 
        icon = null;
        icon = new ImageIcon(icondata);
-       icon = new ImageIcon("jj.jpg");
+       icon = new ImageIcon(MyImageCreator.getResizedBufferedImage("jj.jpg", 100, 100));
        
        mainWindow = new JFrame();       
        mainWindow.setTitle("Jimmy John's Schedule Maker -Max Croston");

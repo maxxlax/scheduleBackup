@@ -10,6 +10,7 @@ import javax.swing.JLabel;
 import javax.swing.JPanel;
 import javax.swing.JTextField;
 
+import scheduling.Schedule;
 import scheduling.Shift;
 
 @SuppressWarnings("serial")
@@ -21,13 +22,21 @@ public class ShiftEditor extends JPanel
   int start, end;
   MainPanel mainPanel;
   boolean isAM;
+  private int id;
+  private String ampm;
+  private Color bg, text;
+  private Schedule schedule;
 
-  public ShiftEditor(MainPanel mainPanel, Color bg, Color fg, Color text)
+  public ShiftEditor(MainPanel mainPanel, Schedule schedule)
   {
+    bg = mainPanel.black;
+    text = mainPanel.white;
+    
     setLayout(null);
     setBackground(bg);
     this.mainPanel = mainPanel;
-
+    this.schedule = schedule;
+    
     title = new JLabel("Shift Editor", JLabel.CENTER);
     title.setFont(new Font(title.getFont().getName(), Font.PLAIN, 20));
     title.setForeground(text);
@@ -74,18 +83,44 @@ public class ShiftEditor extends JPanel
     add(cancelButton);
   }
 
-  public void editShift(Shift shift)
+  public void editShift(Shift shift, String ampm, int id)
   {
+    showShiftEditor();
+    this.ampm = ampm;
+    this.id = id;
+    startField.setText(shift.startTime + "");
+    endField.setText(shift.endTime + "");
+    isAM = shift.isAM;
+  }
+
+  private void completeShiftEdit()
+  {
+    schedule.editShift(start, end, ampm, id);
+    mainPanel.redrawSchedule();
+    hideShiftEditor();
+  }
+  private void showShiftEditor()
+  {
+    mainPanel.getJtp().setSelectedIndex(3);
+    ((AddShiftPanel) getParent()).switchToShiftEditor();
     successfulEdit.setVisible(false);
     noneSelected.setVisible(false);
     startEnd.setVisible(true);
     startField.setVisible(true);
-    startField.setText(shift.startTime + "");
     endField.setVisible(true);
-    endField.setText(shift.endTime + "");
     editButton.setVisible(true);
     cancelButton.setVisible(true);
-    isAM = shift.isAM;
+  }
+
+  private void hideShiftEditor()
+  {
+    ((AddShiftPanel) getParent()).switchOffShiftEditor();
+    noneSelected.setVisible(true);
+    startEnd.setVisible(false);
+    startField.setVisible(false);
+    endField.setVisible(false);
+    editButton.setVisible(false);
+    cancelButton.setVisible(false);
   }
 
   public boolean checkFields()
@@ -101,7 +136,7 @@ public class ShiftEditor extends JPanel
       startField.setBackground(Color.RED);
       check = false;
     }
-
+  
     try
     {
       endTime = Integer.parseInt(endField.getText());
@@ -111,7 +146,7 @@ public class ShiftEditor extends JPanel
       endField.setBackground(Color.RED);
       check = false;
     }
-
+  
     if (startTime == -1 || startTime < 5 || startTime > 20)
     {
       startField.setBackground(Color.RED);
@@ -165,25 +200,14 @@ public class ShiftEditor extends JPanel
       {
         if (checkFields())
         {
-          mainPanel.editShift(start, end);
-          successfulEdit.setVisible(true);
-          noneSelected.setVisible(true);
-          startEnd.setVisible(false);
-          startField.setVisible(false);
-          endField.setVisible(false);
-          editButton.setVisible(false);
-          cancelButton.setVisible(false);
+          completeShiftEdit();
+          startField.setBackground(Color.WHITE);
+          endField.setBackground(Color.WHITE);
         }
       }
       else if (ae.getSource().equals(cancelButton))
       {
-        successfulEdit.setVisible(true);
-        noneSelected.setVisible(true);
-        startEnd.setVisible(false);
-        startField.setVisible(false);
-        endField.setVisible(false);
-        editButton.setVisible(false);
-        cancelButton.setVisible(false);
+        hideShiftEditor();
       }
     }
   }

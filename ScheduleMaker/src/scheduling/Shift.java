@@ -43,8 +43,9 @@ public class Shift implements Comparable<Shift>
       isAM = false;
     }
   }
-  
-  public Shift(int startTime, int endTime, Day day, ShiftType type, boolean filled, Employee employee)
+
+  public Shift(int startTime, int endTime, Day day, ShiftType type, boolean filled,
+      Employee employee)
   {
     super();
     this.startTime = startTime;
@@ -76,9 +77,8 @@ public class Shift implements Comparable<Shift>
 
   public String toString()
   {
-    return "Shift:" + "\n    Day: " + day + "\n    startTime: " + startTime + "\n    endTime: "
-        + endTime + "\n    ShiftType: " + type + "\n    Employee: " + employee.fullName
-        + "\n    filled: " + filled + "\n    isAM: " + isAM + "\n";
+    return "-------Shift--------" + "\n Day:\n  " + day + "\n Start Time:\n  " + startTime
+        + "\n End Time:\n  " + endTime + "\n ShiftType:\n  " + type + "\n Filled:\n  " + filled + "\n";
   }
 
   @Override
@@ -118,7 +118,9 @@ public class Shift implements Comparable<Shift>
   {
     if (b)
     {
-      return toString() + employee.toString(true);
+      String ret = toString();
+      ret += (!filled) ? "" : employee.toString(true);
+      return ret;
     }
     else
     {
@@ -136,7 +138,7 @@ public class Shift implements Comparable<Shift>
   public String toSaveString()
   {
     String str = startTime + "|" + endTime + "|" + day + "|" + type + "|" + filled;
-    if(filled)
+    if (filled)
     {
       str += "|" + employee.fullName;
     }

@@ -1,24 +1,24 @@
-package gui;
+package modList;
 
 import java.awt.event.KeyEvent;
 import java.awt.event.KeyListener;
+import java.util.ArrayList;
 
 import javax.swing.DefaultListModel;
 import javax.swing.JList;
 import javax.swing.event.ListSelectionEvent;
 import javax.swing.event.ListSelectionListener;
 
-import employee.Employee;
-import employee.EmployeeListObserver;
+import gui.MainPanel;
 
 @SuppressWarnings("serial")
-public class MyDragDropList extends JList<String> implements KeyListener, EmployeeListObserver
+abstract public class MyModList extends JList<String> implements KeyListener
 {
-  private DefaultListModel<String> model;
+  protected DefaultListModel<String> model;
   private int currentSelected = -1;
-  private MainPanel mainPanel;
+  protected MainPanel mainPanel;
 
-  public MyDragDropList(MainPanel mainPanel)
+  public MyModList(MainPanel mainPanel)
   {
     super(new DefaultListModel<String>());
     this.mainPanel = mainPanel;
@@ -35,19 +35,13 @@ public class MyDragDropList extends JList<String> implements KeyListener, Employ
     });
   }
 
-  public void addShift(String str)
+  public void setElements(ArrayList<String> elements)
   {
-    model.addElement(str);
-  }
-
-  public void addEmployee(Employee emp)
-  {
-    model.addElement(emp.fullName);
-  }
-
-  public void removeEmployee(Employee emp)
-  {
-    model.removeElement(emp.fullName);
+    model.clear();
+    for(String s: elements)
+    {
+      model.addElement(s);
+    }
   }
 
   @Override
@@ -63,7 +57,7 @@ public class MyDragDropList extends JList<String> implements KeyListener, Employ
           int c = currentSelected;
           model.remove(c);
           model.insertElementAt(currentString, c - 1);
-          reorganizeEmployees();
+          reorganize();
         }
       }
       if (ke.getKeyCode() == 40)
@@ -74,16 +68,14 @@ public class MyDragDropList extends JList<String> implements KeyListener, Employ
           model.remove(c);
           model.insertElementAt(currentString, c + 1);
           setSelectedIndex(c);
+          reorganize();
         }
       }
     }
   }
 
-  private void reorganizeEmployees()
-  {
-      mainPanel.getEmployeeList().reorganizeEmployees(model);
-  }
-
+  protected abstract void reorganize();
+  
   @Override
   public void keyReleased(KeyEvent arg0)
   {
@@ -93,21 +85,5 @@ public class MyDragDropList extends JList<String> implements KeyListener, Employ
   public void keyTyped(KeyEvent ke)
   {
   }
-
-  public void removeEmployee(String string)
-  {
-    model.removeElement(string);
-  }
-
-  @Override
-  public void updateAdd(Employee employee)
-  {
-    addEmployee(employee);
-  }
-
-  @Override
-  public void updateRemove(Employee employee)
-  {
-    removeEmployee(employee);
-  }
+  
 }

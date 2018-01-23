@@ -300,9 +300,9 @@ public class Employee implements Comparable<Employee>
 
 	public String toString(boolean extended)
 	{
-		return "Employee:\n    First Name: " + firstName + "\n    Last Name: " + lastName + "\n    Inshop: " + isInshop
-				+ "\n    Driver: " + isDriver + "\n    Can Double: " + canDouble
-				+ "\n    Current Hours: " + currentHours + "\n    Max Weekly Hours: " + maxNumHours;
+		return "------Employee------\n First Name: " + firstName + "\n Last Name: " + lastName + "\n Inshop: " + isInshop
+				+ "\n Driver: " + isDriver + "\n Can Double: " + canDouble
+				+ "\n Current Hours: " + currentHours + "\n Max Weekly Hrs: " + maxNumHours;
 	}
 
 	@Override

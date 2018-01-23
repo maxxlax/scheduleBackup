@@ -12,15 +12,15 @@ import javax.swing.JPanel;
 import javax.swing.JTextField;
 
 import sales.DaySales;
-import sales.ShiftSale;
 import sales.WeeklySales;
 import scheduling.Day;
+import scheduling.ShiftPeriod;
 
 @SuppressWarnings("serial")
 public class SalesPanel extends JPanel
 {
 	private WeeklySales weeklySales;
-	private ArrayList<ShiftSale> prioritizedSalesWeek;
+	private ArrayList<ShiftPeriod> prioritizedSalesWeek;
 	ArrayList<JTextField> salesFields;
 	
 	public SalesPanel(MainPanel mainPanel)
@@ -120,8 +120,7 @@ public class SalesPanel extends JPanel
 					weeklySales.setSales(new DaySales(Integer.parseInt(salesFields.get(10).getText()), Integer.parseInt(salesFields.get(11).getText()), Day.Friday));
 					weeklySales.setSales(new DaySales(Integer.parseInt(salesFields.get(12).getText()), Integer.parseInt(salesFields.get(13).getText()), Day.Saturday));
 					setPrioritizedSalesWeek(weeklySales.createShiftPriorityBasedOnSales());
-					//System.out.println(ws.toString());
-					mainPanel.setInfo(weeklySales, prioritizedSalesWeek);
+					mainPanel.setPrioritizedSalesWeek(prioritizedSalesWeek);
 				}
 			}
 		});
@@ -132,14 +131,14 @@ public class SalesPanel extends JPanel
 	/**
 	 * @return the prioritizedSalesWeek
 	 */
-	public ArrayList<ShiftSale> getPrioritizedSalesWeek()
+	public ArrayList<ShiftPeriod> getPrioritizedSalesWeek()
 	{
 		return prioritizedSalesWeek;
 	}
 	/**
 	 * @param prioritizedSalesWeek the prioritizedSalesWeek to set
 	 */
-	public void setPrioritizedSalesWeek(ArrayList<ShiftSale> prioritizedSalesWeek)
+	public void setPrioritizedSalesWeek(ArrayList<ShiftPeriod> prioritizedSalesWeek)
 	{
 		this.prioritizedSalesWeek = prioritizedSalesWeek;
 	}

@@ -18,19 +18,21 @@ import scheduling.Week;
 public class SchedulePane extends JPanel
 {
   ArrayList<ShiftField> fillers;
-  HashMap<Day, HashMap<String, ArrayList<ShiftField>>> shiftAreas;
+  HashMap<Day, HashMap<String, ArrayList<ShiftField>>> shiftFields;
   HashMap<String, ArrayList<ShiftField>> shiftHeaders;
   MainPanel mainPanel;
+  private ShiftEditor shiftEditor;
 
-  public SchedulePane(MainPanel mainPanel)
+  public SchedulePane(MainPanel mainPanel, ShiftEditor shiftEditor)
   {
     setLayout(null);
     setBackground(mainPanel.red);
     int boxWidth = 76;
     int boxHeight = 32;
     this.mainPanel = mainPanel;
+    this.shiftEditor = shiftEditor;
 
-    shiftAreas = new HashMap<Day, HashMap<String, ArrayList<ShiftField>>>();
+    shiftFields = new HashMap<Day, HashMap<String, ArrayList<ShiftField>>>();
 
     // Build Fillers
     fillers = new ArrayList<ShiftField>();
@@ -136,7 +138,6 @@ public class SchedulePane extends JPanel
       add(jtd);
 
       // Build ShiftAreas
-
       HashMap<String, ArrayList<ShiftField>> idMap = new HashMap<String, ArrayList<ShiftField>>();
 
       ArrayList<ShiftField> iShifts = new ArrayList<ShiftField>();
@@ -159,16 +160,16 @@ public class SchedulePane extends JPanel
       }
       idMap.put("Driver", dShifts);
 
-      shiftAreas.put(day, idMap);
+      shiftFields.put(day, idMap);
     }
     for (Day day : new Week())
     {
-      for (ShiftField sa : shiftAreas.get(day).get("InShop"))
+      for (ShiftField sa : shiftFields.get(day).get("InShop"))
       {
         add(sa);
       }
 
-      for (ShiftField sa : shiftAreas.get(day).get("Driver"))
+      for (ShiftField sa : shiftFields.get(day).get("Driver"))
       {
         add(sa);
       }
@@ -183,12 +184,12 @@ public class SchedulePane extends JPanel
       if (shift.type.equals(ShiftType.InShop))
       {
         shiftHeaders.get("InShop").get(iCounter).setShift(shift);
-        shiftAreas.get(day).get("InShop").get(iCounter).setShift(shift);
+        shiftFields.get(day).get("InShop").get(iCounter).setShift(shift);
       }
       else if (shift.type.equals(ShiftType.Driver))
       {
         shiftHeaders.get("Driver").get(dCounter).setShift(shift);
-        shiftAreas.get(day).get("Driver").get(dCounter).setShift(shift);
+        shiftFields.get(day).get("Driver").get(dCounter).setShift(shift);
       }
       if (shift.type.equals(ShiftType.InShop))
       {
@@ -200,59 +201,14 @@ public class SchedulePane extends JPanel
       }
     }
     // Empty out other shifts
-    for (int ii = iCounter; ii < shiftAreas.get(day).get("InShop").size(); ii++)
+    for (int ii = iCounter; ii < shiftFields.get(day).get("InShop").size(); ii++)
     {
-      shiftAreas.get(day).get("InShop").get(ii).emptyShift();
+      shiftFields.get(day).get("InShop").get(ii).emptyShift();
     }
-    for (int ii = dCounter; ii < shiftAreas.get(day).get("Driver").size(); ii++)
+    for (int ii = dCounter; ii < shiftFields.get(day).get("Driver").size(); ii++)
     {
-      shiftAreas.get(day).get("Driver").get(ii).emptyShift();
+      shiftFields.get(day).get("Driver").get(ii).emptyShift();
     }
-  }
-
-  private class FillerAreaListener implements FocusListener
-  {
-
-    @Override
-    public void focusGained(FocusEvent fe)
-    {
-      ShiftField current = (ShiftField) fe.getSource();
-      if (!current.isEmpty())
-      {
-        requestFocus();
-        String[] options = {"Edit Shift", "Delete Shift", "Cancel"};
-        int response = JOptionPane.showOptionDialog(null,
-            "What would you like to do with this shift?\n" + current.getShift().toString(false),
-            "Shift Selected", JOptionPane.YES_NO_CANCEL_OPTION, JOptionPane.INFORMATION_MESSAGE,
-            null, options, options[2]);
-
-        int id = getShiftHeaderID(current);
-        if(getShiftHeaderInDr(current).equals("Driver"))
-        {
-          id += numInshop();
-        }
-        String ampm = getShiftAMPM(current.getShift());
-    
-        if (response == 0)
-        {
-          mainPanel.viewShiftEditor(current.getShift(), ampm, id);
-        }
-        else if (response == 1)
-        {
-          if (JOptionPane.showConfirmDialog(null,
-              "Are you sure you want to remove this shift and all assignments made to it?") == 0)
-          {
-            mainPanel.removeShift(ampm, id);
-          }
-        }
-      }
-    }
-
-    @Override
-    public void focusLost(FocusEvent arg0)
-    {
-    }
-
   }
 
   public int getShiftHeaderID(ShiftField current)
@@ -282,6 +238,23 @@ public class SchedulePane extends JPanel
     return "pm";
   }
 
+  public int getShiftFieldID(ShiftField current)
+  {
+    if(shiftFields.get(Day.Sunday).get("InShop").indexOf(current) == -1)
+    {
+      return shiftFields.get(Day.Sunday).get("Driver").indexOf(current);
+    }
+    return shiftFields.get(Day.Sunday).get("InShop").indexOf(current);
+  }
+
+  public String getShiftFieldInDr(ShiftField current)
+  {
+    if(shiftFields.get(Day.Sunday).get("InShop").indexOf(current) == -1)
+    {
+      return "Driver";
+    }
+    return "InShop";
+  }
   public void emptyAll()
   {
     for (ShiftField sf : shiftHeaders.get("InShop"))
@@ -294,11 +267,11 @@ public class SchedulePane extends JPanel
     }
     for (Day day : new Week())
     {
-      for (ShiftField sf : shiftAreas.get(day).get("am"))
+      for (ShiftField sf : shiftFields.get(day).get("am"))
       {
         sf.setText("");
       }
-      for (ShiftField sf : shiftAreas.get(day).get("pm"))
+      for (ShiftField sf : shiftFields.get(day).get("pm"))
       {
         sf.setText("");
       }
@@ -330,13 +303,65 @@ public class SchedulePane extends JPanel
     return -1;
   }
 
+  private class FillerAreaListener implements FocusListener
+  {
+  
+    @Override
+    public void focusGained(FocusEvent fe)
+    {
+      ShiftField current = (ShiftField) fe.getSource();
+      if (!current.isEmpty())
+      {
+        requestFocus();
+        String[] options = {"Edit Shift", "Delete Shift", "Cancel"};
+        int response = JOptionPane.showOptionDialog(null,
+            "What would you like to do with this shift?\n" + current.getShift().toString(false),
+            "Shift Selected", JOptionPane.YES_NO_CANCEL_OPTION, JOptionPane.INFORMATION_MESSAGE,
+            null, options, options[2]);
+  
+        int id = getShiftHeaderID(current);
+        if(getShiftHeaderInDr(current).equals("Driver"))
+        {
+          id += numInshop();
+        }
+        String ampm = getShiftAMPM(current.getShift());
+    
+        if (response == 0)
+        {
+          shiftEditor.editShift(current.getShift(), ampm, id);
+        }
+        else if (response == 1)
+        {
+          if (JOptionPane.showConfirmDialog(null,
+              "Are you sure you want to remove this shift and all assignments made to it?") == 0)
+          {
+            mainPanel.removeShift(ampm, id);
+          }
+        }
+      }
+    }
+  
+    @Override
+    public void focusLost(FocusEvent arg0)
+    {
+    }
+  
+  }
+
   private class ShiftAreaListener implements FocusListener
   {
 
     @Override
     public void focusGained(FocusEvent fe)
     {
-      mainPanel.viewShiftInfo(((ShiftField) fe.getSource()).getShift());
+      ShiftField current = (ShiftField) fe.getSource();
+      int id = getShiftFieldID(current);
+      if(getShiftFieldInDr(current).equals("Driver"))
+      {
+        id += numInshop();
+      }
+      String ampm = getShiftAMPM(current.getShift());
+      mainPanel.viewShiftInfo(current.getShift(), ampm, id);
     }
 
     @Override

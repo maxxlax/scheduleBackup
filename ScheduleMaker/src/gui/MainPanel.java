@@ -1,11 +1,13 @@
 package gui;
 
 import java.awt.Color;
-import java.io.IOException;
+import java.awt.Font;
+import java.text.ParseException;
+import java.text.SimpleDateFormat;
 import java.util.ArrayList;
-import java.util.Collections;
+import java.util.Calendar;
+import java.util.Date;
 
-import javax.swing.ImageIcon;
 import javax.swing.JLabel;
 import javax.swing.JOptionPane;
 import javax.swing.JPanel;
@@ -17,15 +19,19 @@ import employee.Employee;
 import employee.EmployeeList;
 import io.Loader;
 import io.Saver;
-import sales.ShiftSale;
-import sales.WeeklySales;
 import scheduling.Day;
 import scheduling.Schedule;
 import scheduling.Scheduler;
 import scheduling.Shift;
-import scheduling.ShiftType;
-import scheduling.Week;
+import scheduling.ShiftPeriod;
+import timer.TimeRunner;
 
+/**
+ * Jimmy Johns Scheduler 
+ * @version 1
+ * @author Max Croston
+ *
+ */
 @SuppressWarnings("serial")
 public class MainPanel extends JPanel
 {
@@ -39,22 +45,21 @@ public class MainPanel extends JPanel
   private SalesPanel salesPanel;
   private EmployeePanel employeePanel;
   private ViewEmployeesPanel viewEmployeesPanel;
+  private ShiftEditor shiftEditor;
   private AddShiftPanel addShiftPanel;
   private ViewShiftPanel viewShiftPanel;
   private CreateSchedulePanel createSchedulePanel;
   private SchedulePanel schedulePanel;
   private JTabbedPane jtp;
-  private Loader loader;
-  private JLabel imageLabel;
-  private ImageIcon image;
-  private String editShiftAMPM;
-  private int editShiftID;
-  private ArrayList<ShiftSale> prioritizedSalesWeek;
+  private JLabel timeLabel1, timeLabel2;
+  private ArrayList<ShiftPeriod> prioritizedSalesWeek;
   private Scheduler scheduler;
   private boolean salesReady, shiftsReady;
-  @SuppressWarnings("unused")
-  private WeeklySales weeklySales;
+  private JLabel weekLabel;
 
+  /**
+   * Constructor Builds The Panel
+   */
   public MainPanel()
   {
     setLayout(null);
@@ -63,73 +68,132 @@ public class MainPanel extends JPanel
     setVisible(true);
     setBackground(black);
 
-    setSchedule(new Schedule());
-    setEmployeeList(new EmployeeList());
-
     setSalesReady(false);
     setShiftsReady(false);
 
-    schedulePanel = new SchedulePanel(this);
+    schedule = new Schedule();
+    employeeList = new EmployeeList(schedule);
+    shiftEditor = new ShiftEditor(this, schedule);
+    
+    schedulePanel = new SchedulePanel(this, shiftEditor);
+    schedule.setSchedulePanel(schedulePanel);
     add(schedulePanel);
 
     salesPanel = new SalesPanel(this);
     employeePanel = new EmployeePanel(this);
     viewEmployeesPanel = new ViewEmployeesPanel(this);
+    viewEmployeesPanel.setModListAsObserver(employeeList);
     viewShiftPanel = new ViewShiftPanel(this);
     createSchedulePanel = new CreateSchedulePanel(this, schedulePanel);
-    addShiftPanel = new AddShiftPanel(this);
+    addShiftPanel = new AddShiftPanel(this, shiftEditor);
 
     jtp = new JTabbedPane();
     jtp.setTabPlacement(JTabbedPane.LEFT);
     jtp.setBounds(0, 0, 300, 677);
-    jtp.addTab("Enter Sales", getSalesPanel());
-    jtp.addTab("Add Employees", employeePanel);
-    jtp.addTab("View Employees", viewEmployeesPanel);
-    jtp.addTab("Add Shifts", addShiftPanel);
-    jtp.addTab("View Shifts", viewShiftPanel);
+    jtp.addTab("Sales", getSalesPanel());
+    jtp.addTab("Employees", employeePanel);
+    jtp.addTab("Move Employee", viewEmployeesPanel);
+    jtp.addTab("Shifts", addShiftPanel);
+    jtp.addTab("Move Shifts", viewShiftPanel);
     jtp.addTab("Schedule", createSchedulePanel);
     add(jtp);
 
-    image = new ImageIcon("jj.jpg");
-    imageLabel = new JLabel("", image, JLabel.CENTER);
-    imageLabel.setBounds(1, 537, 105, 100);
-    add(imageLabel);
-
+    JLabel myLabel = new JLabel("<HTML>J<br>I<br>M<br>M<br>Y<br><br>J<br>O<br>H<br>N<br>S</HTML>", JLabel.RIGHT);
+    myLabel.setFont(new Font("Monospaced", Font.BOLD, 20));
+    myLabel.setForeground(Color.WHITE);
+    myLabel.setBounds(0, 215, 100, 300);
+    add(myLabel);
+    
     // addExtraTestEmployees();
     employeePanel.nameChanged();
+    
+    //Week Number
+    weekLabel = new JLabel("Week 0", JLabel.CENTER);
+    weekLabel.setBounds(0, 550, 100, 30);
+    weekLabel.setFont(new Font("Monospaced", Font.BOLD, 13));
+    weekLabel.setForeground(Color.WHITE);
+    add(weekLabel);
+    
+    //Timer
+    timeLabel1 = new JLabel("11:38", JLabel.CENTER);
+    timeLabel1.setBounds(0, 600, 100, 30);
+    timeLabel1.setFont(new Font("Monospaced", Font.BOLD, 13));
+    timeLabel1.setForeground(Color.WHITE);
+    add(timeLabel1);
+    
+    timeLabel2 = new JLabel("2018/01/22", JLabel.CENTER);
+    timeLabel2.setBounds(0, 575, 100, 30);
+    timeLabel2.setFont(new Font("Monospaced", Font.BOLD, 13));
+    timeLabel2.setForeground(Color.WHITE);
+    add(timeLabel2);
+    
+    Thread timerThread = new Thread(new TimeRunner(weekLabel, timeLabel1, timeLabel2));
+    timerThread.start();
+    
+    try
+    {
+      String input = "20180123";
+      String format = "yyyyMMdd";
+      
+      SimpleDateFormat df = new SimpleDateFormat(format);
+      Date date = df.parse(input);
+      Calendar cal = Calendar.getInstance();
+      cal.setTime(date);
+      cal.add(Calendar.DAY_OF_YEAR, -3);
+      int week = cal.get(Calendar.WEEK_OF_YEAR);
+      System.out.println("Week: " + week);
+    }
+    catch (ParseException e)
+    {
+      // TODO Auto-generated catch block
+      e.printStackTrace();
+    }
+
   }
 
-  public boolean addShift(Day day, String ampm, ShiftType type, int startTime, int endTime)
+  /**
+   * Adds a shift to the schedule and sorts it
+   * shiftReady = true
+   * redraw
+   * @param shift
+   * @param ampm
+   * @return true if ampm not full
+   */
+  public boolean addShift(Shift shift, String ampm)
   {
-    if (schedule.getNumShiftType(type, day, ampm) < 8)
+    if(schedule.addShift(shift, ampm))
     {
-      getSchedule().get(day).get(ampm).add(new Shift(startTime, endTime, day, type));
-      Collections.sort(getSchedule().get(day).get(ampm));
-      setShiftsReady(true);
+      shiftsReady = true;
       redrawSchedule();
       return true;
     }
-    else
-    {
-      notifyUser(
-          "Can't add any more of that type of shift, remove shifts by clicking the time and selecting remove");
-      return false;
-    }
+    return false;
   }
 
+  /**
+   * Emptys all fillers and redraws the schedule
+   */
   public void redrawSchedule()
   {
     schedulePanel.emptyFillers();
-    schedulePanel.drawShifts(getSchedule());
+    schedulePanel.drawShifts(schedule);
   }
 
-  public void setInfo(WeeklySales weeklySales, ArrayList<ShiftSale> prioritizedSalesWeek)
+  /**
+   * Set Prioritized Sales Week
+   * @param prioritizedSalesWeek
+   */
+  public void setPrioritizedSalesWeek(ArrayList<ShiftPeriod> prioritizedSalesWeek)
   {
-    this.weeklySales = weeklySales;
     this.prioritizedSalesWeek = prioritizedSalesWeek;
+    viewShiftPanel.setElements(prioritizedSalesWeek);
     setSalesReady(true);
   }
 
+  /**
+   * Verify that employees and shifts have been added
+   * Maintain current shifts while drawing in new emps
+   */
   public void fillOpenShifts()
   {
     if (getEmployeeList().size() == 0 && employeeList.isReady())
@@ -143,7 +207,7 @@ public class MainPanel extends JPanel
     }
     else
     {
-      scheduler = new Scheduler(getEmployeeList(), this);
+      scheduler = new Scheduler(employeeList, this);
       scheduler.schedulePrioritizedWeek(prioritizedSalesWeek);
       redrawSchedule();
     }
@@ -153,117 +217,39 @@ public class MainPanel extends JPanel
    * Changes to final tab and displays shift info
    * 
    * @param shift
+   * @param id 
+   * @param ampm 
    */
-  public void viewShiftInfo(Shift shift)
+  public void viewShiftInfo(Shift shift, String ampm, int id)
   {
     jtp.setSelectedIndex(jtp.getTabCount() - 1);
-    createSchedulePanel.viewShift(shift);
+    createSchedulePanel.viewShift(shift, ampm, id);
   }
 
-  public void viewShiftEditor(Shift shift, String ampm, int id)
-  {
-    this.editShiftAMPM = ampm;
-    this.editShiftID = id;
-    jtp.setSelectedIndex(3);
-    addShiftPanel.viewShiftEditor(shift);
-  }
-
-  public void editShift(int start, int end)
-  {
-    for (Day day : new Week())
-    {
-      // Subtract difference shift hours from current hours
-      Shift s = getSchedule().get(day).get(editShiftAMPM).get(editShiftID);
-      if (s.filled)
-      {
-        s.employee.currentHours -= s.endTime - s.startTime;
-        s.employee.currentHours += end - start;
-      }
-      // Edit the shift
-      getSchedule().get(day).get(editShiftAMPM).get(editShiftID).startTime = start;
-      getSchedule().get(day).get(editShiftAMPM).get(editShiftID).endTime = end;
-      Collections.sort(getSchedule().get(day).get(editShiftAMPM));
-    }
-    redrawSchedule();
-  }
-
+  /**
+   * Removes the shift at index i
+   * Removes hours from shift employee
+   * @param ampm
+   * @param i
+   */
   public void removeShift(String ampm, int i)
   {
-    for (Day day : new Week())
-    {
-      // Subtract shift hours from current hours
-      Shift s = getSchedule().get(day).get(ampm).get(i);
-      if (s.filled)
-      {
-        s.employee.currentHours -= s.endTime - s.startTime;
-      }
-      // Remove the shift
-      getSchedule().get(day).get(ampm).remove(i);
-    }
+    schedule.removeShift(ampm, i);
     redrawSchedule();
   }
-
+  
+  /**
+   * Switches to EmployeePanel and sets current employee
+   * @param employee
+   */
   public void viewEmployee(Employee employee)
   {
     jtp.setSelectedIndex(1);
     employeePanel.getEmployeeBox().setSelectedItem(employee);
   }
-
-  public void removeEmployee(String fullName)
-  {
-    Employee emp = null;
-    ArrayList<Employee> copyList = new ArrayList<Employee>(getEmployeeList());
-    for (Employee e : copyList)
-    {
-      if (e.fullName.equals(fullName))
-      {
-        emp = e;
-        getEmployeeList().remove(e);
-      }
-    }
-    if (emp == null)
-    {
-      notifyUser("Unable to find employee " + fullName);
-    }
-    else
-    {
-      viewEmployeesPanel.removeEmployee(emp);
-    }
-    for (Day day : new Week())
-    {
-      for (Shift shift : getSchedule().get(day).get("am"))
-      {
-        if (shift.employee.fullName.equals(fullName))
-        {
-          shift.empty();
-        }
-      }
-      for (Shift shift : getSchedule().get(day).get("pm"))
-      {
-        if (shift.employee.fullName.equals(fullName))
-        {
-          shift.empty();
-        }
-      }
-    }
-    redrawSchedule();
-  }
-
-  public void emptyAllShifts()
-  {
-    for (Day day : new Week())
-    {
-      for (Shift shift : getSchedule().get(day).get("am"))
-      {
-        shift.empty();
-      }
-
-      for (Shift shift : getSchedule().get(day).get("pm"))
-      {
-        shift.empty();
-      }
-    }
-  }
+  
+  
+  
 
   public void notifyUser(String message)
   {
@@ -319,24 +305,25 @@ public class MainPanel extends JPanel
     }
   }
 
+  /**
+   * Creates a saver that completely replaces all text in save file
+   * @return
+   */
   public boolean saveAllInfo()
   {
     System.out.println("Saving...");
-    Saver saver = new Saver(this);
-    return saver.saveAll();
+    Thread thread = new Thread(new Saver(this));
+    thread.start();
+    return true;
   }
 
+  /**
+   * Loads info from save file
+   */
   public void loadAllFiles()
   {
-    try
-    {
-      loader = new Loader(SAVE_FILE_NAME, this, true);
-      loader.loadFiles();
-    }
-    catch (IOException e)
-    {
-      e.printStackTrace();
-    }
+    Thread thread = new Thread(new Loader(SAVE_FILE_NAME, this, true));
+    thread.start();
   }
 
   /**
@@ -373,6 +360,16 @@ public class MainPanel extends JPanel
     this.employeeList = employeeList;
   }
 
+  public JTabbedPane getJtp()
+  {
+    return jtp;
+  }
+
+  public void setJtp(JTabbedPane jtp)
+  {
+    this.jtp = jtp;
+  }
+
   /**
    * @return the schedule
    */
@@ -389,21 +386,6 @@ public class MainPanel extends JPanel
   {
     this.schedule = schedule;
   }
-  /*
-   * public void editEmployee(String firstName, String lastName, boolean isInshop, boolean isDriver,
-   * boolean canDouble, int maxNumHours, ArrayList<int[]> availability) { int index =
-   * getEmployeeList() .indexOf(new Employee(firstName, lastName, isInshop, isDriver, canDouble,
-   * maxNumHours, availability)); Employee emp = getEmployeeList().get(index); emp.firstName =
-   * firstName; emp.lastName = lastName; emp.isInshop = isInshop; emp.isDriver = isDriver;
-   * emp.canDouble = canDouble; emp.maxNumHours = maxNumHours; emp.setAvailability(availability); //
-   * Iterate shifts and ensure that emp can take on all shifts for (Day day : new Week()) { for
-   * (Shift shift : getSchedule().get(day).get("am")) { if (shift.employee.fullName.equals(firstName
-   * + " " + lastName)) { if (!emp.isAvailable(shift)) { shift.empty(); } } } for (Shift shift :
-   * getSchedule().get(day).get("pm")) { if (shift.employee.fullName.equals(firstName + " " +
-   * lastName)) {
-   * 
-   * } } } }
-   */
 
   /**
    * @return the salesReady
@@ -437,8 +419,17 @@ public class MainPanel extends JPanel
     this.shiftsReady = shiftsReady;
   }
 
+  /**
+   * Sales Ready + EmployeeList Ready + Shifts Ready
+   * @return
+   */
   public boolean isReady()
   {
     return isSalesReady() && employeeList.isReady() && isShiftsReady();
+  }
+
+  public ShiftEditor getShiftEditor()
+  {
+    return shiftEditor;
   }
 }

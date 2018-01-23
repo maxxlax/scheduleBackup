@@ -1,11 +1,11 @@
 Sales
-Sunday|1000|1200
-Monday|1400|1000
-Tuesday|1600|900
-Wednesday|1700|600
+Sunday|1200|1000
+Monday|1200|1100
+Tuesday|1300|1000
+Wednesday|2000|1000
 Thursday|1600|1000
-Friday|1900|1600
-Saturday|2100|2000
+Friday|2100|1000
+Saturday|2100|1000
 |
 Employees
 Max Croston|true|true|true|48|50|9|23|9|23|9|23|9|23|9|23|9|23|9|23

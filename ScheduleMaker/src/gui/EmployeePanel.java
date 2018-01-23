@@ -21,11 +21,12 @@ import javax.swing.text.StyledDocument;
 
 import employee.Employee;
 import employee.EmployeeBox;
+import employee.EmployeeList;
 
 @SuppressWarnings("serial")
 public class EmployeePanel extends JPanel
 {
-  private MainPanel mainPanel;
+  private EmployeeList employeeList;
   private EmployeeBox employeeBox;
   private JCheckBox inshop, driver, canDouble;
   private JLabel firstName, lastName, maxNumHoursLabel, avLab1, avLab2, avLab3, startEnd, sun, mon,
@@ -35,18 +36,21 @@ public class EmployeePanel extends JPanel
   private ArrayList<JTextField> availability;
   private JPanel avPanel;
   private JButton addEmployee, removeEmployee;
+  private Color white;
 
   public EmployeePanel(MainPanel mainPanel)
   {
-    this.mainPanel = mainPanel;
     setLayout(null);
     setBackground(mainPanel.red);
     setBorder(BorderFactory.createBevelBorder(1, mainPanel.black, mainPanel.white));
 
+    employeeList = mainPanel.getEmployeeList();
+    white = mainPanel.white;
+
     availability = new ArrayList<JTextField>();
-    employeeBox = new EmployeeBox(mainPanel.getEmployeeList());
+    employeeBox = new EmployeeBox(employeeList);
     employeeBox.addActionListener(new EmployeeListener());
-    mainPanel.getEmployeeList().addObserver(employeeBox);
+    employeeList.addObserver(employeeBox);
     add(employeeBox);
 
     firstName = new JLabel("First Name: ");
@@ -112,7 +116,6 @@ public class EmployeePanel extends JPanel
     JPanel avPan = new JPanel();
     avPan.setLayout(null);
     avPan.setBounds(5, 50, 180, 225);
-    // avPan.setBounds(0, 50, 190, 225);
     avPan.setBackground(mainPanel.red);
     availabilityPanel.add(avPan);
 
@@ -207,7 +210,7 @@ public class EmployeePanel extends JPanel
     @Override
     public void actionPerformed(ActionEvent ae)
     {
-      //Add/Edit Employee
+      // Add/Edit Employee
       if (ae.getSource() == addEmployee)
       {
         setTextAreasColor(Color.WHITE);
@@ -218,42 +221,49 @@ public class EmployeePanel extends JPanel
             Employee emp = new Employee(firstNameArea.getText(), lastNameArea.getText(),
                 inshop.isSelected(), driver.isSelected(), canDouble.isSelected(),
                 Integer.parseInt(maxNumHoursArea.getText()), getAvailabilityFromFields());
-            mainPanel.getEmployeeList().add(emp);
+            employeeList.add(emp);
             setError("Employee Added");
             System.out.println(emp.toString(true));
           }
           else
           {
-            mainPanel.getEmployeeList().editEmployee(firstNameArea.getText(), lastNameArea.getText(),
+            employeeList.editEmployee(firstNameArea.getText(), lastNameArea.getText(),
                 inshop.isSelected(), driver.isSelected(), canDouble.isSelected(),
-                Integer.parseInt(maxNumHoursArea.getText()), getAvailabilityFromFields(), mainPanel.getSchedule());
+                Integer.parseInt(maxNumHoursArea.getText()), getAvailabilityFromFields());
             setError("Employee Edited");
           }
         }
       }
-      //Remove Employee
+      // Remove Employee
       else if (ae.getSource() == removeEmployee)
       {
         if (!nameNotFound())
         {
-          mainPanel.removeEmployee(firstNameArea.getText() + " " + lastNameArea.getText());
+          employeeList.remove(firstNameArea.getText() + " " + lastNameArea.getText());
         }
       }
-      //Handle Employee Box
+      // Handle Employee Box
       else if (ae.getSource() == employeeBox)
       {
         setTextAreasColor(Color.WHITE);
         Employee emp = (Employee) employeeBox.getSelectedItem();
-        firstNameArea.setText(emp.firstName);
-        lastNameArea.setText(emp.lastName);
-        inshop.setSelected(emp.isInshop());
-        driver.setSelected(emp.isDriver());
-        canDouble.setSelected(emp.canDouble);
-        maxNumHoursArea.setText("" + emp.getMaxNumHours());
-        for (int ii = 0; ii < availability.size(); ii += 2)
+        if (emp != null)
         {
-          availability.get(ii).setText("" + emp.getAvailability().get(ii / 2)[0]);
-          availability.get(ii + 1).setText("" + emp.getAvailability().get(ii / 2)[1]);
+          firstNameArea.setText(emp.firstName);
+          lastNameArea.setText(emp.lastName);
+          inshop.setSelected(emp.isInshop());
+          driver.setSelected(emp.isDriver());
+          canDouble.setSelected(emp.canDouble);
+          maxNumHoursArea.setText("" + emp.getMaxNumHours());
+          for (int ii = 0; ii < availability.size(); ii += 2)
+          {
+            availability.get(ii).setText("" + emp.getAvailability().get(ii / 2)[0]);
+            availability.get(ii + 1).setText("" + emp.getAvailability().get(ii / 2)[1]);
+          }
+        }
+        else
+        {
+          emptyAreasExceptFNLN();
         }
       }
     }
@@ -345,7 +355,7 @@ public class EmployeePanel extends JPanel
     {
       for (JTextField jta : availability)
       {
-        if(jta.getText().equals(""))
+        if (jta.getText().equals(""))
         {
           jta.setText("-1");
         }
@@ -385,12 +395,11 @@ public class EmployeePanel extends JPanel
 
   public void nameChanged()
   {
-    System.out.println("AAAAAAA" + nameNotFound());
     if (nameNotFound())
     {
       addEmployee.setText("Add Employee");
       emptyAreasExceptFNLN();
-      setTextAreasColor(mainPanel.white);
+      setTextAreasColor(white);
       setError("");
     }
     else
@@ -415,7 +424,7 @@ public class EmployeePanel extends JPanel
 
   public Employee getEmployee(String string)
   {
-    for (Employee e : mainPanel.getEmployeeList())
+    for (Employee e : employeeList)
     {
       if (e.fullName.equals(firstNameArea.getText() + " " + lastNameArea.getText()))
       {
@@ -450,7 +459,7 @@ public class EmployeePanel extends JPanel
 
   private boolean nameNotFound()
   {
-    if(mainPanel.getEmployeeList().findName(getFullNameFromFields()) == null)
+    if (employeeList.findName(getFullNameFromFields()) == null)
     {
       return true;
     }

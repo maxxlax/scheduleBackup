@@ -3,23 +3,28 @@ package employee;
 import java.util.ArrayList;
 import javax.swing.DefaultListModel;
 
+import scheduling.Day;
 import scheduling.Schedule;
+import scheduling.Shift;
+import scheduling.Week;
 
 @SuppressWarnings("serial")
 public class EmployeeList extends ArrayList<Employee>
 {
   private ArrayList<EmployeeListObserver> observers;
   private boolean isReady;
+  private Schedule schedule;
 
-  public EmployeeList()
+  public EmployeeList(Schedule schedule)
   {
     super();
+    this.schedule = schedule;
     observers = new ArrayList<EmployeeListObserver>();
     setReady(false);
   }
 
   public void editEmployee(String firstName, String lastName, boolean isInshop, boolean isDriver,
-      boolean canDouble, int maxNumHours, ArrayList<int[]> availability, Schedule schedule)
+      boolean canDouble, int maxNumHours, ArrayList<int[]> availability)
   {
     int index = indexOf(new Employee(firstName, lastName, isInshop, isDriver, canDouble,
         maxNumHours, availability));
@@ -43,8 +48,8 @@ public class EmployeeList extends ArrayList<Employee>
   {
     for (int ii = 0; ii < listModel.size(); ii++)
     {
-      Employee emp = remove(indexOf(new Employee(listModel.get(ii))));
-      add(emp);
+      Employee emp = super.remove(indexOf(new Employee(listModel.get(ii))));
+      super.add(emp);
     }
 
   }
@@ -68,23 +73,48 @@ public class EmployeeList extends ArrayList<Employee>
     if (flag)
     {
       setReady(true);
-      notifyUsersAdd(employee);
+      notifyObserversAdd(employee);
     }
     return flag;
   }
 
   public boolean remove(Employee employee)
   {
+    System.out.println("Removing... " + employee.toSaveString());
     boolean flag = super.remove(employee);
     if (flag)
     {
-      notifyUsersRemove(employee);
+      notifyObserversRemove(employee);
       if (size() == 0)
       {
         setReady(false);
       }
+      //Empty Shifts
+      for (Day day : new Week())
+      {
+        for (Shift shift : schedule.get(day).get("am"))
+        {
+          if (shift.employee.fullName.equals(employee.fullName))
+          {
+            shift.empty();
+          }
+        }
+        for (Shift shift : schedule.get(day).get("pm"))
+        {
+          if (shift.employee.fullName.equals(employee.fullName))
+          {
+            shift.empty();
+          }
+        }
+      }
+      schedule.redraw();
     }
     return flag;
+  }
+  
+  public boolean remove(String name)
+  {
+    return remove(findName(name));
   }
 
   public void addObserver(EmployeeListObserver elo)
@@ -92,7 +122,7 @@ public class EmployeeList extends ArrayList<Employee>
     observers.add(elo);
   }
 
-  public void notifyUsersAdd(Employee employee)
+  public void notifyObserversAdd(Employee employee)
   {
     for (EmployeeListObserver elo : observers)
     {
@@ -100,7 +130,7 @@ public class EmployeeList extends ArrayList<Employee>
     }
   }
 
-  public void notifyUsersRemove(Employee employee)
+  public void notifyObserversRemove(Employee employee)
   {
     for (EmployeeListObserver elo : observers)
     {
