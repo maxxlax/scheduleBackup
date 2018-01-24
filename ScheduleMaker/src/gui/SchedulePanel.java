@@ -17,13 +17,13 @@ public class SchedulePanel extends JTabbedPane
 	public SchedulePanel(MainPanel mainPanel, ShiftEditor shiftEditor)
 	{
 		super();
-		setBounds(300, 0, 1000 - 315, 677 - 35);
-		setBackground(mainPanel.red);
+		setBounds(298, 0, 1000 - 315, 677 - 35);
+		setBackground(mainPanel.black);
 		setVisible(true);
 		setTabPlacement(JTabbedPane.TOP);
-		amSchedulePane = new SchedulePane(mainPanel, shiftEditor);
+		amSchedulePane = new SchedulePane(mainPanel, shiftEditor, "am");
 		amSchedulePane.setBackground(mainPanel.black);
-		pmSchedulePane = new SchedulePane(mainPanel, shiftEditor);
+		pmSchedulePane = new SchedulePane(mainPanel, shiftEditor, "pm");
 		pmSchedulePane.setBackground(mainPanel.black);
 		addTab("AM Schedule", amSchedulePane);
 		addTab("PM Schedule", pmSchedulePane);
@@ -46,7 +46,7 @@ public class SchedulePanel extends JTabbedPane
 
   public void emptyFillers()
   {
-    amSchedulePane.emptyFillers();
-    pmSchedulePane.emptyFillers();
+    amSchedulePane.emptyHeaders();
+    pmSchedulePane.emptyHeaders();
   }
 }

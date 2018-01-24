@@ -6,7 +6,6 @@ import java.awt.GridLayout;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.util.ArrayList;
-import javax.swing.BorderFactory;
 import javax.swing.JButton;
 import javax.swing.JCheckBox;
 import javax.swing.JLabel;
@@ -42,7 +41,7 @@ public class EmployeePanel extends JPanel
   {
     setLayout(null);
     setBackground(mainPanel.red);
-    setBorder(BorderFactory.createBevelBorder(1, mainPanel.black, mainPanel.white));
+    setBounds(0, 0, 190, 550);
 
     employeeList = mainPanel.getEmployeeList();
     white = mainPanel.white;
@@ -63,7 +62,7 @@ public class EmployeePanel extends JPanel
     add(firstNameArea);
 
     lastName = new JLabel("Last Name: ");
-    lastName.setBounds(10, 70, 100, 30);
+    lastName.setBounds(10, 72, 100, 30);
     add(lastName);
 
     lastNameArea = new JTextField();

@@ -2,12 +2,7 @@ package gui;
 
 import java.awt.Color;
 import java.awt.Font;
-import java.text.ParseException;
-import java.text.SimpleDateFormat;
 import java.util.ArrayList;
-import java.util.Calendar;
-import java.util.Date;
-
 import javax.swing.JLabel;
 import javax.swing.JOptionPane;
 import javax.swing.JPanel;
@@ -129,26 +124,6 @@ public class MainPanel extends JPanel
     
     Thread timerThread = new Thread(new TimeRunner(weekLabel, timeLabel1, timeLabel2));
     timerThread.start();
-    
-    try
-    {
-      String input = "20180123";
-      String format = "yyyyMMdd";
-      
-      SimpleDateFormat df = new SimpleDateFormat(format);
-      Date date = df.parse(input);
-      Calendar cal = Calendar.getInstance();
-      cal.setTime(date);
-      cal.add(Calendar.DAY_OF_YEAR, -3);
-      int week = cal.get(Calendar.WEEK_OF_YEAR);
-      System.out.println("Week: " + week);
-    }
-    catch (ParseException e)
-    {
-      // TODO Auto-generated catch block
-      e.printStackTrace();
-    }
-
   }
 
   /**

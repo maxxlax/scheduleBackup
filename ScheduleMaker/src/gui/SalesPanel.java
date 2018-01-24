@@ -26,9 +26,9 @@ public class SalesPanel extends JPanel
 	public SalesPanel(MainPanel mainPanel)
 	{
 		setLayout(null);
-		setBackground(mainPanel.red);
+		setBackground(mainPanel.black);
 		JPanel textPanel = new JPanel();
-		textPanel.setBackground(mainPanel.red);
+		textPanel.setBackground(mainPanel.black);
 		textPanel.setLayout(new GridLayout(0, 2));
 		textPanel.setBounds(0, 0, 190, 550);
 
@@ -36,21 +36,25 @@ public class SalesPanel extends JPanel
 		setPrioritizedSalesWeek(weeklySales.createShiftPriorityBasedOnSales());
 
 		ArrayList<JLabel> labels = new ArrayList<JLabel>();
-		labels.add(new JLabel("Sunday AM $", JLabel.CENTER));
-		labels.add(new JLabel("Sunday PM $", JLabel.CENTER));
-		labels.add(new JLabel("Monday AM $", JLabel.CENTER));
-		labels.add(new JLabel("Monday PM $", JLabel.CENTER));
-		labels.add(new JLabel("Tueday AM $", JLabel.CENTER));
-		labels.add(new JLabel("Tueday PM $", JLabel.CENTER));
-		labels.add(new JLabel("Wednesday AM $", JLabel.CENTER));
-		labels.add(new JLabel("Wednesday PM $", JLabel.CENTER));
-		labels.add(new JLabel("Thursday AM $", JLabel.CENTER));
-		labels.add(new JLabel("Thursday PM $", JLabel.CENTER));
-		labels.add(new JLabel("Friday AM $", JLabel.CENTER));
-		labels.add(new JLabel("Friday PM $", JLabel.CENTER));
-		labels.add(new JLabel("Saturday AM $", JLabel.CENTER));
-		labels.add(new JLabel("Saturday PM $", JLabel.CENTER));
+		labels.add(new JLabel("Sunday AM", JLabel.CENTER));
+		labels.add(new JLabel("Sunday PM", JLabel.CENTER));
+		labels.add(new JLabel("Monday AM", JLabel.CENTER));
+		labels.add(new JLabel("Monday PM", JLabel.CENTER));
+		labels.add(new JLabel("Tueday AM", JLabel.CENTER));
+		labels.add(new JLabel("Tueday PM", JLabel.CENTER));
+		labels.add(new JLabel("Wednesday AM", JLabel.CENTER));
+		labels.add(new JLabel("Wednesday PM", JLabel.CENTER));
+		labels.add(new JLabel("Thursday AM", JLabel.CENTER));
+		labels.add(new JLabel("Thursday PM", JLabel.CENTER));
+		labels.add(new JLabel("Friday AM", JLabel.CENTER));
+		labels.add(new JLabel("Friday PM", JLabel.CENTER));
+		labels.add(new JLabel("Saturday AM", JLabel.CENTER));
+		labels.add(new JLabel("Saturday PM", JLabel.CENTER));
 
+		for(JLabel label: labels)
+		{
+		  ComponentFormatter.formatBasicSmall(label);
+		}
 		salesFields = new ArrayList<JTextField>();
 		for(int ii = 0; ii < 14; ii++)
 		{

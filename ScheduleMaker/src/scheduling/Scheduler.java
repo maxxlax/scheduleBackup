@@ -4,7 +4,6 @@ import java.util.ArrayList;
 
 import employee.Employee;
 import gui.MainPanel;
-import sales.ShiftSale;
 
 public class Scheduler
 {

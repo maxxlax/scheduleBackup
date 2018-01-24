@@ -1,4 +1,4 @@
-package gui;
+package fieldmap;
 
 import javax.swing.JTextField;
 
@@ -61,5 +61,10 @@ public class ShiftField extends JTextField
 	public boolean isEmpty()
 	{
 	  return empty;
+	}
+	
+	public void setFiller(boolean filler)
+	{
+	  this.filler = filler;
 	}
 }
