@@ -12,13 +12,13 @@ import javax.swing.event.ListSelectionListener;
 import gui.MainPanel;
 
 @SuppressWarnings("serial")
-abstract public class MyModList extends JList<String> implements KeyListener
+abstract public class AbstractModList extends JList<String> implements KeyListener
 {
   protected DefaultListModel<String> model;
   private int currentSelected = -1;
   protected MainPanel mainPanel;
 
-  public MyModList(MainPanel mainPanel)
+  public AbstractModList(MainPanel mainPanel)
   {
     super(new DefaultListModel<String>());
     this.mainPanel = mainPanel;

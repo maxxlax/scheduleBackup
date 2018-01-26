@@ -407,4 +407,11 @@ public class MainPanel extends JPanel
   {
     return shiftEditor;
   }
+
+  public void emptyAllInfo()
+  {
+    employeeList.removeAll();
+    schedule.removeAllShifts();
+    schedulePanel.emptyAll();
+  }
 }

@@ -75,9 +75,9 @@ public class Schedule extends HashMap<Day, HashMap<String, ArrayList<Shift>>>
       get(day).get(editShiftAMPM).get(editShiftID).startTime = start;
       get(day).get(editShiftAMPM).get(editShiftID).endTime = end;
       Collections.sort(get(day).get(editShiftAMPM));
-      
-      //Ensure emp doesn't go over max
-      if(s.employee.currentHours > s.employee.maxNumHours)
+
+      // Ensure emp doesn't go over max
+      if (s.employee.currentHours > s.employee.maxNumHours)
       {
         get(day).get(editShiftAMPM).get(editShiftID).empty();
       }
@@ -104,6 +104,7 @@ public class Schedule extends HashMap<Day, HashMap<String, ArrayList<Shift>>>
 
   /**
    * Adds a shift to the schedule and sorts it
+   * 
    * @param shift
    * @param ampm
    * @return true if ampm not full
@@ -120,7 +121,7 @@ public class Schedule extends HashMap<Day, HashMap<String, ArrayList<Shift>>>
   }
 
   /**
-   * Completely emptys all shifts in the schedule 
+   * Completely emptys all shifts in the schedule
    */
   public void emptyAllShifts()
   {
@@ -137,7 +138,7 @@ public class Schedule extends HashMap<Day, HashMap<String, ArrayList<Shift>>>
       }
     }
   }
-  
+
   public void redraw()
   {
     // TODO Create this instead of mainPanel.redraw
@@ -148,6 +149,18 @@ public class Schedule extends HashMap<Day, HashMap<String, ArrayList<Shift>>>
   public void setSchedulePanel(SchedulePanel schedulePanel)
   {
     this.schedulePanel = schedulePanel;
+  }
+
+  public void removeAllShifts()
+  {
+    for (int ii = 0; ii < get(Day.Sunday).get("am").size(); ii++)
+    {
+      removeShift("am", ii);
+    }
+    for (int ii = 0; ii < get(Day.Sunday).get("pm").size(); ii++)
+    {
+      removeShift("pm", ii);
+    }
   }
 
 }

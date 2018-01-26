@@ -154,4 +154,13 @@ public class EmployeeList extends ArrayList<Employee>
   {
     this.isReady = isReady;
   }
+
+  public void removeAll()
+  {
+    ArrayList<Employee> copy = new ArrayList<Employee>(this);
+     for(Employee employee: copy)
+     {
+       remove(employee);
+     }
+  }
 }

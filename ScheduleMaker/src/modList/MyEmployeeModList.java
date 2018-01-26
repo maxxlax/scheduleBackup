@@ -5,7 +5,7 @@ import employee.EmployeeListObserver;
 import gui.MainPanel;
 
 @SuppressWarnings("serial")
-public class MyEmployeeModList extends MyModList implements EmployeeListObserver
+public class MyEmployeeModList extends AbstractModList implements EmployeeListObserver
 {
 
   public MyEmployeeModList(MainPanel mainPanel)

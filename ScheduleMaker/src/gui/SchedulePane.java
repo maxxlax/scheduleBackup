@@ -5,8 +5,8 @@ import javax.swing.JOptionPane;
 import javax.swing.JPanel;
 
 import fieldmap.ShiftField;
-import fieldmap.ShiftFieldMap;
-import fieldmap.ShiftHeaderMap;
+import fieldmap.FullShiftMap;
+import fieldmap.HeaderShiftMap;
 import scheduling.Day;
 import scheduling.Shift;
 import scheduling.ShiftType;
@@ -15,8 +15,8 @@ import scheduling.ShiftType;
 public class SchedulePane extends JPanel
 {
   ArrayList<ShiftField> fillers;
-  ShiftFieldMap shiftFields;
-  ShiftHeaderMap shiftHeaders;
+  FullShiftMap shiftFields;
+  HeaderShiftMap shiftHeaders;
   MainPanel mainPanel;
   private ShiftEditor shiftEditor;
   private String ampm;
@@ -65,8 +65,8 @@ public class SchedulePane extends JPanel
     filler3.setEditable(false);
     add(filler3);
 
-    shiftHeaders = new ShiftHeaderMap(this);
-    shiftFields = new ShiftFieldMap(boxWidth, boxHeight, this);
+    shiftHeaders = new HeaderShiftMap(this);
+    shiftFields = new FullShiftMap(boxWidth, boxHeight, this);
 
     for (ShiftField sf : shiftFields)
     {

@@ -21,8 +21,8 @@ public class Shift implements Comparable<Shift>
     super();
     this.day = day;
     this.type = type;
-    filled = false;
     setEmployee(new Employee());
+    filled = false;
   }
 
   public Shift(int startTime, int endTime, Day day, ShiftType type)
@@ -71,14 +71,16 @@ public class Shift implements Comparable<Shift>
 
   public void setEmployee(Employee employee)
   {
+    this.employee.currentHours -= endTime - startTime;
     this.employee = employee;
+    this.employee.currentHours += endTime - startTime;
     filled = true;
   }
 
   public String toString()
   {
-    return "-------Shift--------" + "\n Day:\n  " + day + "\n Start Time:\n  " + startTime
-        + "\n End Time:\n  " + endTime + "\n ShiftType:\n  " + type + "\n Filled:\n  " + filled + "\n";
+    return "-------Shift--------" + "\n Day: " + day + "\n Start: " + startTime
+        + "\n End: " + endTime + "\n ShiftType: " + type + "\n Filled: " + filled + "\n";
   }
 
   @Override
@@ -130,7 +132,6 @@ public class Shift implements Comparable<Shift>
 
   public void empty()
   {
-    employee.currentHours -= endTime - startTime;
     setEmployee(new Employee());
     filled = false;
   }
@@ -143,5 +144,10 @@ public class Shift implements Comparable<Shift>
       str += "|" + employee.fullName;
     }
     return str;
+  }
+
+  public int getTotalTime()
+  {
+    return endTime - startTime;
   }
 }

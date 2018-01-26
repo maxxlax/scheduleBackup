@@ -11,12 +11,12 @@ import scheduling.Day;
 import scheduling.Week;
 
 @SuppressWarnings("serial")
-public class ShiftFieldMap extends HashMap<Day, ShiftMap> implements Iterable<ShiftField>
+public class FullShiftMap extends HashMap<Day, FieldShiftMap> implements Iterable<ShiftField>
 {
   private int boxWidth, boxHeight;
   private SchedulePane schedulePane;
 
-  public ShiftFieldMap(int boxWidth, int boxHeight, SchedulePane schedulePane)
+  public FullShiftMap(int boxWidth, int boxHeight, SchedulePane schedulePane)
   {
     super();
     this.boxWidth = boxWidth;
@@ -72,7 +72,7 @@ public class ShiftFieldMap extends HashMap<Day, ShiftMap> implements Iterable<Sh
       schedulePane.add(jtd);
 
       // Build ShiftAreas
-      ShiftMap idMap = new ShiftMap(schedulePane, offset);
+      FieldShiftMap idMap = new FieldShiftMap(schedulePane, offset);
       put(day, idMap);
     }
   }

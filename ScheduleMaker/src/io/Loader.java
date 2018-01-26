@@ -49,6 +49,7 @@ public class Loader implements Runnable
   {
     try
     {
+      mainPanel.emptyAllInfo();
       loadFiles();
     }
     catch (IOException e)
@@ -202,6 +203,7 @@ public class Loader implements Runnable
     boolean dr = Boolean.parseBoolean(stoken.nextToken());
     boolean dou = Boolean.parseBoolean(stoken.nextToken());
     int curr = Integer.parseInt(stoken.nextToken());
+    curr = 0;
     int max = Integer.parseInt(stoken.nextToken());
     ArrayList<int[]> av = new ArrayList<int[]>();
     av.add(new int[] {Integer.parseInt(stoken.nextToken()), Integer.parseInt(stoken.nextToken())});
@@ -241,7 +243,6 @@ public class Loader implements Runnable
         {
           emp = e;
           shift.setEmployee(emp);
-          shift.filled = true;
           break;
         }
         else

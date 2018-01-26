@@ -1,10 +1,10 @@
-package gui;
+package fieldmap;
 
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Iterator;
 
-import fieldmap.ShiftField;
+import gui.SchedulePane;
 import scheduling.ShiftType;
 
 @SuppressWarnings("serial")

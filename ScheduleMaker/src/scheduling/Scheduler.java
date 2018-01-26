@@ -160,14 +160,15 @@ public class Scheduler
 					// Check Type
 					if (emp.can(shift.type))
 					{
+					  //TODO FIND ERROR HERE
+					  System.out.println("TRYING: " + emp.toSaveString() + "\nFOR: " + shift);
 						// Within availability
 						if (emp.isAvailable(shift))
 						{
 							// Make sure emp doesn't go over maxHours
-							if (emp.currentHours + (shift.endTime - shift.startTime) <= emp.getMaxNumHours())
+							if (emp.wontExceedMax(shift))
 							{
 								shift.setEmployee(emp);
-								emp.currentHours += shift.endTime - shift.startTime;
 								timePeriodFilled = true;
 							}
 
@@ -239,12 +240,11 @@ public class Scheduler
 								&& shift.endTime <= emp.getAvailability(day)[1])
 						{
 							// Make sure emp doesn't go over maxHours
-							if (emp.currentHours + (shift.endTime - shift.startTime) <= emp.getMaxNumHours())
+							if (emp.wontExceedMax(shift))
 							{
 								// System.out.println(shift.toString() + emp.toString() + "\n\tamSet: " + amSet
 								// + "\n\tpmSet" + pmSet);
 								shift.setEmployee(emp);
-								emp.currentHours += shift.endTime - shift.startTime;
 								if (shift.isAM)
 								{
 									amSet = true;

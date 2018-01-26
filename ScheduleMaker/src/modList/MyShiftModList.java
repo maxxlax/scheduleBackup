@@ -8,7 +8,7 @@ import scheduling.Day;
 import scheduling.ShiftPeriod;
 
 @SuppressWarnings("serial")
-public class MyShiftModList extends MyModList
+public class MyShiftModList extends AbstractModList
 {
 
   public MyShiftModList(MainPanel mainPanel)

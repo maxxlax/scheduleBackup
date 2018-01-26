@@ -3,41 +3,37 @@ package fieldmap;
 import java.awt.event.FocusEvent;
 import java.awt.event.FocusListener;
 
-import gui.AbstractShiftMap;
 import gui.SchedulePane;
 
 @SuppressWarnings("serial")
-public class ShiftMap extends AbstractShiftMap
+public class HeaderShiftMap extends  AbstractShiftMap implements Iterable<ShiftField>
 {
-
-  public ShiftMap(SchedulePane schedulePane, int offset)
+  public HeaderShiftMap(SchedulePane schedulePane)
   {
-    super(schedulePane, offset);
+    super(schedulePane, 1);
   }
 
-  @Override
   protected void addFocusAndPane()
   {
     for(ShiftField sf: this)
     {
-      sf.addFocusListener(new ShiftAreaListener());
-      sf.setFiller(false);
+      sf.addFocusListener(new HeaderListener());
       schedulePane.add(sf);
     }
   }
 
-  private class ShiftAreaListener implements FocusListener
+  private class HeaderListener implements FocusListener
   {
 
     @Override
     public void focusGained(FocusEvent fe)
     {
       ShiftField current = (ShiftField) fe.getSource();
-      schedulePane.newFieldFocus(current, getID(current));
+      schedulePane.newHeaderFocus(current, getID(current));
     }
 
     @Override
-    public void focusLost(FocusEvent fe)
+    public void focusLost(FocusEvent arg0)
     {
     }
 
